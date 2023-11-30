@@ -3,11 +3,14 @@ import * as vscode from 'vscode';
 export function activate(context: vscode.ExtensionContext) {
     console.log('Your extension "code-assist" is now active!');
 
-    let disposable = vscode.commands.registerCommand('code-assist.helloWorld', () => {
+    const disposable = vscode.commands.registerCommand('code-assist.helloWorld', () => {
         const activeEditor = vscode.window.activeTextEditor;
         if (activeEditor) {
-            const filePath = activeEditor.document.uri.fsPath;
+				const { document } = activeEditor;
+            const filePath = document.uri.fsPath;
             vscode.window.showInformationMessage(`Current file path: ${filePath}`);
+				const text = document.getText();
+				vscode.window.showInformationMessage(`Current file text: ${text}`);
         } else {
             vscode.window.showInformationMessage('No active editor');
         }
