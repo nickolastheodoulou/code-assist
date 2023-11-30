@@ -1,26 +1,37 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+
+type CodeInput = {
+    fileName: string,
+    fileContent: string
+}[]
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Your extension "code-assist" is now active!');
+    let disposable = vscode.commands.registerCommand('code-assist.helloWorld', async () => {
+        // Ask the user for file names
+        const input = await vscode.window.showInputBox({
+            placeHolder: 'Enter relative file names separated by commas',
+        });
 
-    const disposable = vscode.commands.registerCommand('code-assist.helloWorld', () => {
-        const activeEditor = vscode.window.activeTextEditor;
-        if (activeEditor) {
-				const { document } = activeEditor;
-            const filePath = document.uri.fsPath;
-            vscode.window.showInformationMessage(`Current file path: ${filePath}`);
-				const text = document.getText();
-				vscode.window.showInformationMessage(`Current file text: ${text}`);
-        } else {
-            vscode.window.showInformationMessage('No active editor');
-        }
+        const codeInput: CodeInput = []
 
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (workspaceFolders) {
-            const workspacePath = workspaceFolders[0].uri.fsPath;
-            vscode.window.showInformationMessage(`Current workspace path: ${workspacePath}`);
-        } else {
-            vscode.window.showInformationMessage('No open workspace');
+        if (input) {
+            const fileNames = input.split(',').map(file => file.trim());
+            fileNames.forEach(fileName => {
+                const filePath = path.join(vscode.workspace.rootPath || '', fileName);
+                try {
+                    const fileContent = fs.readFileSync(filePath, 'utf8');
+                    codeInput.push({
+                        fileName,
+                        fileContent
+                    })
+                } catch (error) {
+                    // @ts-ignore
+                    vscode.window.showErrorMessage(`Error reading file ${fileName}: ${error.message}`);
+                }
+            });
+            vscode.window.showInformationMessage(`This is my code in an array of object with the structure { fileName: string, fileContent: string }: ${JSON.stringify(codeInput)}`);
         }
     });
 
