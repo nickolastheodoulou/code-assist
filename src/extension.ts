@@ -1,76 +1,57 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-
-type CodeInput = {
-    fileName: string,
-    fileContent: string
-}[];
-
-function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
-    if (level > maxDepth || !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
-        return '';
-    }
-
-    let tree = '';
-    const files = fs.readdirSync(dirPath);
-
-    for (const file of files) {
-        tree += ' '.repeat(level * 2) + file + '\n';
-        const filePath = path.join(dirPath, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            tree += generateFileTree(filePath, level + 1, maxDepth);
-        }
-    }
-
-    return tree;
-}
+import path from "path";
+import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('code-assist.helloWorld', async () => {
-        // Ask the user for file names
-        const input = await vscode.window.showInputBox({
-            placeHolder: 'Enter relative file names separated by commas',
-        });
+  let disposable = vscode.commands.registerCommand(
+    "code-assist.openWebview",
+    () => {
+      const panel = vscode.window.createWebviewPanel(
+        "fileInput",
+        "File Input",
+        vscode.ViewColumn.One,
+        {
+          // Enable scripts in the webview
+          enableScripts: true,
 
-        const codeInput: CodeInput = [];
-
-        if (input) {
-            const fileNames = input.split(',').map(file => file.trim());
-
-            fileNames.forEach(fileName => {
-                const filePath = path.join(vscode.workspace.rootPath || '', fileName);
-                try {
-                    const fileContent = fs.readFileSync(filePath, 'utf8');
-                    codeInput.push({
-                        fileName,
-                        fileContent
-                    });
-                } catch (error) {
-                    // @ts-ignore
-                    vscode.window.showErrorMessage(`Error reading file ${fileName}: ${error.message}`);
-                }
-            });
-
-            const rootDir = fileNames.length > 0 ? path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0])) : '';
-
-            const fileTree = generateFileTree(rootDir);
-            vscode.window.showInformationMessage(`
-            I'm looking to update my code to meet the following business requirements with the ticket information:
-
-            ** INSERT TICKET**
-
-            This is my code in an array of object with the structure { fileName: string, fileContent: string }: ${JSON.stringify(codeInput)}. 
-            
-            This is the file tree of my code staring with \n ${rootDir}: \n ${fileTree}. 
-            
-            Let me know if you would like to see further input from the files.
-
-            Can you offer some code solutions to meet the ticket requirements?`);
+          // Restrict the webview to only loading content from our extension's `media` directory.
+          localResourceRoots: [
+            vscode.Uri.file(path.join(context.extensionPath, "media")),
+          ],
         }
-    });
+      );
 
-    context.subscriptions.push(disposable);
+      // Get the path to script on disk
+      const onDiskPath = vscode.Uri.file(
+        path.join(context.extensionPath, "media", "webviewScript.js")
+      );
+
+      // And the uri we use to load this script in the webview
+      const scriptUri = panel.webview.asWebviewUri(onDiskPath);
+
+      panel.webview.html = getWebviewContent(scriptUri);
+    }
+  );
+
+  context.subscriptions.push(disposable);
+}
+
+function getWebviewContent(scriptUri: vscode.Uri) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${scriptUri};">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Input</title>
+</head>
+<body>
+    <h1>Input File Names</h1>
+    <input type="text" id="fileInput" placeholder="Enter file names"/>
+    <button id="submitButton">Submit</button>
+
+    <script src="${scriptUri}"></script>
+</body>
+</html>`;
 }
 
 export function deactivate() {}

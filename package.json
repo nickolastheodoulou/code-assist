@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "code-assist.helloWorld",
-        "title": "Hello World"
+        "command": "code-assist.openWebview",
+        "title": "Open File Input Webview"
       }
     ]
   },
