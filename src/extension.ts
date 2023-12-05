@@ -51,11 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
           message => {
               switch (message.command) {
                   case 'submit':
-                      const { files } = message.data;
+                      const { files, ticketInfo } = message.data;
                       const codeInput: CodeInput = [];
-
-                      console.log('files', files);
-                      // Handle the form data here (e.g., display, store, or process it)
 
                       // @ts-ignore
                       const fileNames = files.split(',').map(file => file.trim());
@@ -81,7 +78,9 @@ export function activate(context: vscode.ExtensionContext) {
                       vscode.window.showInformationMessage(`
                           I'm looking to update my code to meet the following business requirements with the ticket information:
               
-                          ** INSERT TICKET**
+
+                          ${ticketInfo}
+
               
                           This is my code in an array of object with the structure { fileName: string, fileContent: string }: ${JSON.stringify(codeInput)}. 
                           
@@ -111,17 +110,20 @@ function getFormHtml(): string {
 </head>
 <body>
     <form id="myForm">
-        <label for="files">Files (delimited with ,):</label><br>
+        <label for="files">Relative File Paths (seperated by ','):</label><br>
         <input type="text" id="files" name="files"><br>
+        <label for="ticket-info">Ticket Info:</label><br>
+        <textarea id="ticket-info" name="Ticket Info"></textarea><br>
         <input type="button" value="Submit" onclick="submitForm()">
     </form>
     <script>
         const vscode = acquireVsCodeApi();
         function submitForm() {
             const files = document.getElementById('files').value;
+            const ticketInfo = document.getElementById('ticket-info').value;
             vscode.postMessage({
                 command: 'submit',
-                data: { files }
+                data: { files, ticketInfo }
             });
         }
     </script>
