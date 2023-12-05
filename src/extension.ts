@@ -1,55 +1,63 @@
-import path from "path";
-import * as vscode from "vscode";
+import * as vscode from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand(
-    "code-assist.openWebview",
-    () => {
-      const panel = vscode.window.createWebviewPanel(
-        "fileInput",
-        "File Input",
-        vscode.ViewColumn.One,
-        {
-          // Enable scripts in the webview
-          enableScripts: true,
+    let disposable = vscode.commands.registerCommand('code-assist.showForm', () => {
+        const panel = vscode.window.createWebviewPanel(
+            'formView',
+            'Form View',
+            vscode.ViewColumn.One,
+            {
+                // Enable scripts in the webview
+                enableScripts: true
+            }
+        );
 
-          // Restrict the webview to only loading content from our extension's `media` directory.
-          localResourceRoots: [
-            vscode.Uri.file(path.join(context.extensionPath, "media")),
-          ],
-        }
-      );
+        panel.webview.html = getFormHtml();
 
-      // Get the path to script on disk
-      const onDiskPath = vscode.Uri.file(
-        path.join(context.extensionPath, "media", "webviewScript.js")
-      );
+        // Handle messages from the webview
+        panel.webview.onDidReceiveMessage(
+            message => {
+                switch (message.command) {
+                    case 'submit':
+                        const { files } = message.data;
+                        console.log('files', files);
+                        // Handle the form data here (e.g., display, store, or process it)
+                        vscode.window.showInformationMessage(`Files: ${files}`);
+                        return;
+                }
+            },
+            undefined,
+            context.subscriptions
+        );
+    });
 
-      // And the uri we use to load this script in the webview
-      const scriptUri = panel.webview.asWebviewUri(onDiskPath);
-
-      panel.webview.html = getWebviewContent(scriptUri);
-    }
-  );
-
-  context.subscriptions.push(disposable);
+    context.subscriptions.push(disposable);
 }
 
-function getWebviewContent(scriptUri: vscode.Uri) {
-  return `<!DOCTYPE html>
+function getFormHtml(): string {
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${scriptUri};">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Input</title>
+    <title>Form</title>
 </head>
 <body>
-    <h1>Input File Names</h1>
-    <input type="text" id="fileInput" placeholder="Enter file names"/>
-    <button id="submitButton">Submit</button>
-
-    <script src="${scriptUri}"></script>
+    <form id="myForm">
+        <label for="files">Files (delimited with ,):</label><br>
+        <input type="text" id="files" name="files"><br>
+        <input type="button" value="Submit" onclick="submitForm()">
+    </form>
+    <script>
+        const vscode = acquireVsCodeApi();
+        function submitForm() {
+            const files = document.getElementById('files').value;
+            vscode.postMessage({
+                command: 'submit',
+                data: { files }
+            });
+        }
+    </script>
 </body>
 </html>`;
 }
