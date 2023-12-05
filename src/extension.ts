@@ -125,42 +125,61 @@ function getFormHtml(): string {
         <textarea id="ticket-info" name="Ticket Info"></textarea><br>
         <input type="button" value="Submit" onclick="submitForm()">
     </form>
-        <script>
-        const vscode = acquireVsCodeApi();
+    <script>
+    const vscode = acquireVsCodeApi();
+    
+    // Restores the state when the webview is reloaded
+    const previousState = vscode.getState();
+    if (previousState) {
+        document.getElementById('files').value = previousState.files || '';
+        document.getElementById('ticket-info').value = previousState.ticketInfo || '';
+    }
 
-        function displayError(message) {
-            const errorElement = document.getElementById('error-message');
+    function saveState() {
+        const files = document.getElementById('files').value;
+        const ticketInfo = document.getElementById('ticket-info').value;
+        vscode.setState({ files, ticketInfo });
+    }
+
+    function displayError(message) {
+        const errorElement = document.getElementById('error-message');
             errorElement.textContent = message; // Display the error message
             errorElement.style.display = message ? 'block' : 'none'; // Hide the element if there's no message
-        }
-    
-        function validateInput(files, ticketInfo) {
-            if (!files.trim()) {
+    }
+
+    function validateInput(files, ticketInfo) {
+        if (!files.trim()) {
                 return 'Please enter file paths.';
             }
             if (!ticketInfo.trim()) {
                 return 'Please enter ticket information.';
             }
             return '';
-        }
+    }
 
-        function submitForm() {
-            const files = document.getElementById('files').value;
-            const ticketInfo = document.getElementById('ticket-info').value;
-    
-            const errorMessage = validateInput(files, ticketInfo);
-            if (errorMessage) {
-                displayError(errorMessage);
-                return;
-            }
-            displayError(''); // Clear any previous error messages
-    
-            vscode.postMessage({
-                command: 'submit',
-                data: { files, ticketInfo }
-            });
+    function submitForm() {
+        const files = document.getElementById('files').value;
+        const ticketInfo = document.getElementById('ticket-info').value;
+
+        const errorMessage = validateInput(files, ticketInfo);
+        if (errorMessage) {
+            displayError(errorMessage);
+            return;
         }
-    </script>
+        displayError('');
+
+        saveState(); // Save state on submit
+
+        vscode.postMessage({
+            command: 'submit',
+            data: { files, ticketInfo }
+        });
+    }
+
+    // Add event listeners to save state when form fields change
+    document.getElementById('files').addEventListener('change', saveState);
+    document.getElementById('ticket-info').addEventListener('change', saveState);
+</script>
 </body>
 </html>`;
 }
