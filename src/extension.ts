@@ -1,33 +1,100 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+
+type CodeInput = {
+    fileName: string,
+    fileContent: string
+}[];
+
+type Message = {
+    data: {
+        files: string
+    }
+}
+
+function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
+    if (level > maxDepth || !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
+        return '';
+    }
+
+    let tree = '';
+    const files = fs.readdirSync(dirPath);
+
+    for (const file of files) {
+        tree += ' '.repeat(level * 2) + file + '\n';
+        const filePath = path.join(dirPath, file);
+        if (fs.statSync(filePath).isDirectory()) {
+            tree += generateFileTree(filePath, level + 1, maxDepth);
+        }
+    }
+
+    return tree;
+}
 
 export function activate(context: vscode.ExtensionContext) {
     let disposable = vscode.commands.registerCommand('code-assist.showForm', () => {
         const panel = vscode.window.createWebviewPanel(
-            'formView',
-            'Form View',
-            vscode.ViewColumn.One,
-            {
-                // Enable scripts in the webview
-                enableScripts: true
-            }
+          'formView',
+          'Form View',
+          vscode.ViewColumn.One,
+          {
+              // Enable scripts in the webview
+              enableScripts: true
+          }
         );
 
         panel.webview.html = getFormHtml();
 
         // Handle messages from the webview
         panel.webview.onDidReceiveMessage(
-            message => {
-                switch (message.command) {
-                    case 'submit':
-                        const { files } = message.data;
-                        console.log('files', files);
-                        // Handle the form data here (e.g., display, store, or process it)
-                        vscode.window.showInformationMessage(`Files: ${files}`);
-                        return;
-                }
-            },
-            undefined,
-            context.subscriptions
+          message => {
+              switch (message.command) {
+                  case 'submit':
+                      const { files } = message.data;
+                      const codeInput: CodeInput = [];
+
+                      console.log('files', files);
+                      // Handle the form data here (e.g., display, store, or process it)
+
+                      // @ts-ignore
+                      const fileNames = files.split(',').map(file => file.trim());
+
+                      // @ts-ignore
+                      fileNames.forEach(fileName => {
+                          const filePath = path.join(vscode.workspace.rootPath || '', fileName);
+                          try {
+                              const fileContent = fs.readFileSync(filePath, 'utf8');
+                              codeInput.push({
+                                  fileName,
+                                  fileContent
+                              });
+                          } catch (error) {
+                              // @ts-ignore
+                              vscode.window.showErrorMessage(`Error reading file ${fileName}: ${error.message}`);
+                          }
+                      });
+
+                      const rootDir = fileNames.length > 0 ? path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0])) : '';
+
+                      const fileTree = generateFileTree(rootDir);
+                      vscode.window.showInformationMessage(`
+                          I'm looking to update my code to meet the following business requirements with the ticket information:
+              
+                          ** INSERT TICKET**
+              
+                          This is my code in an array of object with the structure { fileName: string, fileContent: string }: ${JSON.stringify(codeInput)}. 
+                          
+                          This is the file tree of my code staring with \n ${rootDir}: \n ${fileTree}. 
+                          
+                          Let me know if you would like to see further input from the files.
+              
+                          Can you offer some code solutions to meet the ticket requirements?`);
+                      return;
+              }
+          },
+          undefined,
+          context.subscriptions
         );
     });
 
