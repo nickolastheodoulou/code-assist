@@ -33,7 +33,7 @@ function generateFileTree(dirPath: string, level: number = 0, maxDepth: number =
 }
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('code-assist.showForm', () => {
+    let disposable = vscode.commands.registerCommand('code-assist.generatePrompt', () => {
         const panel = vscode.window.createWebviewPanel(
             'formView',
             'Form View',
@@ -52,27 +52,35 @@ export function activate(context: vscode.ExtensionContext) {
                 switch (message.command) {
                     case 'submit':
                         const { files, ticketInfo } = message.data;
-                        const codeInput: CodeInput = [];
-
                         // @ts-ignore
                         const fileNames = files.split(',').map(file => file.trim());
 
                         // @ts-ignore
+                        if (fileNames.some(fileName => !fileName)) {
+                            vscode.window.showErrorMessage('Invalid file path provided.');
+                            return;
+                        }
+
+                        const codeInput = [];
                         for (const fileName of fileNames) {
                             const filePath = path.join(vscode.workspace.rootPath || '', fileName);
+                            if (!fs.existsSync(filePath)) {
+                                const errorMessage = `File not found: ${fileName}`;
+                                vscode.window.showErrorMessage(errorMessage);
+                                throw new Error(errorMessage);
+                            }
                             try {
                                 const fileContent = await fs.promises.readFile(filePath, 'utf8');
-                                codeInput.push({
-                                    fileName,
-                                    fileContent
-                                });
+                                codeInput.push({ fileName, fileContent });
                             } catch (error) {
                                 // @ts-ignore
-                                vscode.window.showErrorMessage(`Error reading file ${fileName}: ${error.message}`);
+                                const errorMessage = `Error reading file ${fileName}: ${error.message}`;
+                                vscode.window.showErrorMessage(errorMessage);
                             }
                         }
 
-                        const rootDir = fileNames.length > 0 ? path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0])) : '';
+
+                        const rootDir = path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0]));
 
                         const fileTree = generateFileTree(rootDir);
                         vscode.window.showInformationMessage(`
@@ -109,6 +117,7 @@ function getFormHtml(): string {
     <title>Form</title>
 </head>
 <body>
+    <div id="error-message" style="color: red;"></div>
     <form id="myForm">
         <label for="files">Relative File Paths (seperated by ','):</label><br>
         <input type="text" id="files" name="files"><br>
@@ -116,11 +125,36 @@ function getFormHtml(): string {
         <textarea id="ticket-info" name="Ticket Info"></textarea><br>
         <input type="button" value="Submit" onclick="submitForm()">
     </form>
-    <script>
+        <script>
         const vscode = acquireVsCodeApi();
+
+        function displayError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message; // Display the error message
+            errorElement.style.display = message ? 'block' : 'none'; // Hide the element if there's no message
+        }
+    
+        function validateInput(files, ticketInfo) {
+            if (!files.trim()) {
+                return 'Please enter file paths.';
+            }
+            if (!ticketInfo.trim()) {
+                return 'Please enter ticket information.';
+            }
+            return '';
+        }
+
         function submitForm() {
             const files = document.getElementById('files').value;
             const ticketInfo = document.getElementById('ticket-info').value;
+    
+            const errorMessage = validateInput(files, ticketInfo);
+            if (errorMessage) {
+                displayError(errorMessage);
+                return;
+            }
+            displayError(''); // Clear any previous error messages
+    
             vscode.postMessage({
                 command: 'submit',
                 data: { files, ticketInfo }

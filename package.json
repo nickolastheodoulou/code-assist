@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "code-assist.showForm",
-        "title": "Show form"
+        "command": "code-assist.generatePrompt",
+        "title": "Generate Prompt"
       }
     ]
   },
