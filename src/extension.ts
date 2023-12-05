@@ -115,14 +115,61 @@ function getFormHtml(): string {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box; /* Make sure padding doesn't affect overall width */
+        }
+        #error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black; /* If you need a dotted underline */
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px; /* Use half of the width (120px/2 = 60px) */
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+    </style>
 </head>
 <body>
-    <div id="error-message" style="color: red;"></div>
+    <div id="error-message"></div>
     <form id="myForm">
-        <label for="files">Relative File Paths (seperated by ','):</label><br>
-        <input type="text" id="files" name="files"><br>
-        <label for="ticket-info">Ticket Info:</label><br>
-        <textarea id="ticket-info" name="Ticket Info"></textarea><br>
+        <label for="files">Relative File Paths:</label>
+        <input type="text" id="files" name="files" placeholder="e.g., src/index.js, lib/util.js">
+        <span class="tooltip">?
+            <span class="tooltiptext">Enter file paths separated by commas</span>
+        </span>
+
+        <label for="ticket-info">Ticket Info:</label>
+        <textarea id="ticket-info" name="Ticket Info" placeholder="Describe your ticket information here..." rows="4"></textarea>
+        
         <input type="button" value="Submit" onclick="submitForm()">
     </form>
     <script>
