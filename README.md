@@ -23,15 +23,15 @@ Here is a screenshot to give you a glimpse of code-assist in action:
 Tip: Witness code-assist's capabilities through these short, focused animations, demonstrating its ease of use and powerful features.
 Requirements
 
-## Before installing code-assist, ensure you have the following:
+## Before installing code-assist, ensure you have the following
 
-Visual Studio Code (version 1.XX or higher)
+- Visual Studio Code (version 1.XX or higher)
 
-## This extension contributes to the following settings:
+## This extension contributes to the following settings
 
-Currently No Settings
+- Currently No Settings options
 
-## To install code-assist, follow these steps:
+## To install code-assist, follow these steps
 
 1. Open Visual Studio Code.
 2. Navigate to the Extensions view by clicking on the square icon on the sidebar.
