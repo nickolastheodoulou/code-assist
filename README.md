@@ -1,71 +1,68 @@
 # code-assist README
 
-This is the README for your extension "code-assist". After writing up a brief description, we recommend including the following sections.
+Welcome to "code-assist", a powerful Visual Studio Code extension designed to streamline your coding workflow. Whether you're a seasoned developer or just starting out, code-assist offers intuitive tools to generate code solutions, unit tests, and code optimizations efficiently, saving you time and enhancing your coding experience.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+1. Generate Code Solution: With code-assist, you can automatically generate code solutions based on your project's specific requirements. Simply input your file paths and ticket information, and let code-assist do the rest.
 
-For example if there is an image subfolder under your extension project workspace:
+2. Generate Unit Tests: Ensure your code's reliability with our automated unit test generation feature. This tool analyzes your code and creates comprehensive unit tests, helping you catch bugs and improve code quality.
 
-\!\[feature X\]\(images/feature-x.png\)
+3. Generate Code Optimizations: Code-assist not only writes code but also suggests optimizations. It provides insights into performance improvements and best coding practices tailored to your codebase.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Screenshots and Animations
 
-## Requirements
+Here is a screenshot to give you a glimpse of code-assist in action:
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+![How to find](/readme/readme.png)
 
-## Extension Settings
+1. Code Solution Generation: Code Solution Generation
+2. Unit Test Creation: Unit Test Creation
+3. Code Optimization Suggestions: Code Optimization
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Tip: Witness code-assist's capabilities through these short, focused animations, demonstrating its ease of use and powerful features.
+Requirements
 
-For example:
+## Before installing code-assist, ensure you have the following
 
-This extension contributes the following settings:
+- Visual Studio Code (version 1.XX or higher)
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## This extension contributes to the following settings
+
+- Currently No Settings options
+
+## To install code-assist, follow these steps
+
+1. Open Visual Studio Code.
+2. Navigate to the Extensions view by clicking on the square icon on the sidebar.
+3. Search for "code-assist" and click install.
+4. Once installed, refer to the screenshot to see how to use the plugin
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Currently no known issues found
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+- 1.0.0
+    Initial release with code solution generation, unit test creation, and code optimization features.
 
-### 1.0.0
+## Frequently Asked Questions (FAQs)
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+- Q: Does code-assist support all programming languages?
+- A: Currently, code-assist focuses on JavaScript and TypeScript. It can support other languages but there are plans to expand to other languages in future updates.
 
 ---
 
-## Following extension guidelines
+- Q: Can I customize the code generation templates?
+- A: Yes, code-assist allows you to modify the templates used for code generation. Visit the settings to customize them.
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## License
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+This software and its source code are proprietary and confidential. Any reproduction, modification, distribution, or disclosure in whole or in part, directly or indirectly, is strictly prohibited without the prior express written permission of the author.
 
-## Working with Markdown
+## Contact Information
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+For support or inquiries, please email us at <nickolastheodoulou@hotmail.com>.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Enjoy coding with ease using code-assist!
