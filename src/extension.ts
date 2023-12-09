@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
     const treeDataProvider = new CodeAssistTreeProvider();
     vscode.window.createTreeView('codeAssistTreeView', { treeDataProvider });
 
-    const openFormCommand = vscode.commands.registerCommand('code-assist.openForm', (promptType) => {
+    const openFormCommand = vscode.commands.registerCommand('code-prompt-assist.openForm', (promptType) => {
         openForm(promptType, context);
     });
 

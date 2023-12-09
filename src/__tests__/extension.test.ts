@@ -30,13 +30,13 @@ describe("Extension", () => {
       expect.any(Object)
     );
     expect(vscode.commands.registerCommand).toHaveBeenCalledWith(
-      "code-assist.openForm",
+      "code-prompt-assist.openForm",
       expect.any(Function)
     );
   });
 
   it("registers openForm command correctly", () => {
-    const commandName = "code-assist.openForm";
+    const commandName = "code-prompt-assist.openForm";
     const promptType = "testPromptType";
 
     activate(mockContext as unknown as vscode.ExtensionContext);
