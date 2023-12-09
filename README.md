@@ -90,6 +90,8 @@ Currently no known issues found
     - Settings available to redact strings from the prompt settings
 - 1.0.1
     - Fix broken changes
+- 1.0.2
+    - Implement CI for deployment of extension
 
 ## Frequently Asked Questions (FAQs)
 

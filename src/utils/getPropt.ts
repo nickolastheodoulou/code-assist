@@ -12,8 +12,6 @@ function applyRedactionRules(text: string): string {
   let redactedText = text;
   let redactionCount = 0;
 
-  console.log('redactionRules', redactionRules);
-
   redactionRules.forEach((rule) => {
     const replacement = rule.replacement || `redacted${++redactionCount}`;
     redactedText = redactedText.replace(
