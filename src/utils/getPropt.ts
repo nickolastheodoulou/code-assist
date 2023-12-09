@@ -1,5 +1,28 @@
 import { GetPrompt, PromptType } from "../__types__/types";
 
+import * as vscode from "vscode";
+
+function applyRedactionRules(text: string): string {
+  const redactionRules = vscode.workspace
+    .getConfiguration()
+    .get<{ original: string; replacement?: string }[]>(
+      "codeAssist.redactionRules",
+      []
+    );
+  let redactedText = text;
+  let redactionCount = 0;
+
+  redactionRules.forEach((rule) => {
+    const replacement = rule.replacement || `redacted${++redactionCount}`;
+    redactedText = redactedText.replace(
+      new RegExp(rule.original, "g"),
+      replacement
+    );
+  });
+
+  return redactedText;
+}
+
 /*
 TODO consider adding
     Context: [Add any additional context about the environment or technologies used]
@@ -32,7 +55,7 @@ const getPropt: GetPrompt = (
       promptMessage = "";
   }
 
-  return `I'm looking to update my code to meet the following business requirements with the ticket information:
+  const nonRedactedPrompt = `I'm looking to update my code to meet the following business requirements with the ticket information:
     
   ${ticketInfo}
     
@@ -50,7 +73,8 @@ const getPropt: GetPrompt = (
   
   Ideally I'd want to get to a point that I can raise an MR with the suggestions prodived
   `;
+
+  return applyRedactionRules(nonRedactedPrompt);
 };
 
 export { getPropt };
-//

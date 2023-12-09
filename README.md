@@ -29,7 +29,48 @@ Requirements
 
 ## This extension contributes to the following settings
 
-- Currently No Settings options
+This extension contributes the following settings which can be added to your `.vscode/settings.json` file:
+
+- `codeAssist.redactionRules`: This setting allows you to specify a list of rules for redacting strings in the generated code. Each rule consists of an `original` string and an optional `replacement` string. If the `replacement` string is not provided, the extension will automatically use a default format: `redactedN`, where `N` is a unique number for each redacted string.
+
+### Example Configuration
+
+```json
+{
+    "codeAssist.redactionRules": [
+        {
+            "original": "apiKey",
+            "replacement": "confidentialKey"
+        },
+        {
+            "original": "username"
+            // No replacement is provided for "username",
+            // so it will be replaced with "redacted1", "redacted2", etc., 
+            // based on its occurrence.
+        },
+        {
+            "original": "password",
+            // Again, no replacement provided. This will follow the redactedN pattern.
+        }
+    ]
+}
+```
+
+### How To Configure
+
+1. **Open Your Workspace Settings**: Go to your project workspace in VSCode. Press `Ctrl +` , (or `Cmd +` , on macOS) to open Settings.
+2. **Edit settings.json**: Click on the {} icon in the top right corner to open the `settings.json` file.
+3. **Add Redaction Rules**: Add the `codeAssist.redactionRules` configuration with the desired rules as shown in the example above.
+4. **Save the Changes**: Save your `settings.json` file. The extension will now use these rules to redact strings in the generated code.
+
+### Understanding the Configuration:
+
+- Each rule in the `redactionRules` array consists of two properties:
+    - **original**: The string you want to redact.
+    - **replacement** (optional): The string to replace the `original` string. If omitted, the extension automatically uses a placeholder in the format `redactedN`.
+- The replacement is applied to all occurrences of the `original` string in the generated code.
+- The `redactedN` pattern ensures that each unique redacted string has a distinct placeholder, with `N` incrementing for each new original string without a specified replacement.
+
 
 ## To install code-assist, follow these steps
 
@@ -45,7 +86,8 @@ Currently no known issues found
 ## Release Notes
 
 - 1.0.0
-    Initial release with code solution generation, unit test creation, and code optimization features.
+    - Initial release with code solution generation, unit test creation, and code optimization features.
+    - Settings available to redact strings from the prompt settings
 
 ## Frequently Asked Questions (FAQs)
 
