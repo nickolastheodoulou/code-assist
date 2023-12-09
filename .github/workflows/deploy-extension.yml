@@ -19,7 +19,7 @@ jobs:
         node-version: '21'
 
     - name: Install dependencies
-      run: npm run install
+      run: npm install
 
     - name: Run unit tests
       run: npm run test
