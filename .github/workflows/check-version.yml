@@ -30,9 +30,13 @@ jobs:
       - name: Check README.md in PR branch
         id: pr_readme
         run: |
-          if git diff --name-only ${{ github.base_ref }} | grep -q 'README.md'; then
+          git fetch origin main:main
+          README_CHANGED=$(git diff --name-only main...${{ github.head_ref }} | grep -c 'README.md' || true)
+          if [ "$README_CHANGED" -gt 0 ]; then
+            echo "README.md has been updated."
             echo "::set-output name=UPDATED::true"
           else
+            echo "README.md has not been updated."
             echo "::set-output name=UPDATED::false"
           fi
 
