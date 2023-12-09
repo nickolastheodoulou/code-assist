@@ -18,7 +18,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21'
+          node-version: '20'
 
       - name: Get version from PR branch
         id: pr_version
@@ -31,8 +31,8 @@ jobs:
         id: pr_readme
         run: |
           git fetch origin main
-          README_DIFF=$(git diff --name-only origin/main...${{ github.head_ref }} | grep -q 'README.md' && echo 'changed' || echo 'unchanged')
-          if [ "$README_DIFF" = "changed" ]; then
+          README_CHANGED=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep -c 'README.md' || true)
+          if [ "$README_CHANGED" -gt 0 ]; then
             echo "README.md has been updated."
             echo "::set-output name=UPDATED::true"
           else
