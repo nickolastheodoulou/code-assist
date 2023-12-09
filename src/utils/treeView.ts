@@ -31,17 +31,17 @@ class CodeAssistTreeProvider
       // Root items
       return Promise.resolve([
         createTreeItem("1. Generate Code Solution", {
-          command: "code-assist.openForm",
+          command: "code-prompt-assist.openForm",
           title: "Open Form",
           arguments: ["codeSolution"],
         }),
         createTreeItem("2. Generate Unit Tests", {
-          command: "code-assist.openForm",
+          command: "code-prompt-assist.openForm",
           title: "Open Form",
           arguments: ["unitTests"],
         }),
         createTreeItem("3. Generate Code Optimizations", {
-          command: "code-assist.openForm",
+          command: "code-prompt-assist.openForm",
           title: "Open Form",
           arguments: ["codeOptimizations"],
         }),
