@@ -39,8 +39,10 @@ jobs:
       - name: Check README.md in PR branch
         id: pr_readme
         run: |
-          README_DIFF=$(git diff --name-only origin/main...${{ github.sha }} | grep 'README.md' && echo 'true' || echo 'false')
-          echo "::set-output name=UPDATED::$README_DIFF"
+          git fetch origin ${{ github.base_ref }}
+          README_DIFF=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep 'README.md' && echo 'true' || echo 'false')
+          echo "README_UPDATED=$README_DIFF" >> $GITHUB_ENV
+      
 
       - name: Get version from main branch
         id: main_version
