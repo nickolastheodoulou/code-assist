@@ -22,7 +22,10 @@ jobs:
 
       - name: Get version from PR branch
         id: pr_version
-        run: echo "::set-output name=VERSION::$(node -p \"require('./package.json').version\")"
+        run: |
+            VERSION=$(node -p "require('./package.json').version")
+            echo "Version from PR branch: $VERSION"
+            echo "::set-output name=VERSION::$VERSION"
 
       - name: Check README.md in PR branch
         id: pr_readme
@@ -40,7 +43,10 @@ jobs:
 
       - name: Get version from main branch
         id: main_version
-        run: echo "::set-output name=VERSION::$(node -p \"require('./package.json').version\")"
+        run: |
+            VERSION=$(node -p "require('./package.json').version")
+            echo "Version from main branch: $VERSION"
+            echo "::set-output name=VERSION::$VERSION"
 
       - name: Compare versions and check README.md
         run: |
