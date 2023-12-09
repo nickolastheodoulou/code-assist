@@ -2,7 +2,7 @@
   "name": "code-assist",
   "displayName": "code-assist",
   "description": "code assist from workspace",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.84.0"
   },

@@ -1,5 +1,15 @@
+import * as vscode from 'vscode';
+
 import { PromptType } from "../../__types__/types";
-import { getPropt } from "../getPropt";
+import { getPropt, applyRedactionRules } from "../getPropt";
+
+jest.mock('vscode', () => ({
+    workspace: {
+        getConfiguration: jest.fn(() => ({
+            get: jest.fn().mockReturnValue([])
+        }))
+    }
+}));
 
 describe('getPropt', () => {
     const ticketInfo = 'Ticket Information';
@@ -42,4 +52,41 @@ describe('getPropt', () => {
         expect(result).not.toContain('Can you offer');
         expect(result).not.toContain('Can you write me');
     });
+});
+
+describe('applyRedactionRules', () => {
+    let getConfigurationMock: jest.Mock<any, any, any>;
+
+    beforeEach(() => {
+        getConfigurationMock = jest.fn().mockReturnValue({
+            get: jest.fn().mockReturnValue([])
+        });
+        vscode.workspace.getConfiguration = getConfigurationMock;
+    });
+
+    test('replaces specified strings with their replacements', () => {
+        getConfigurationMock.mockReturnValueOnce({
+            get: jest.fn().mockReturnValueOnce([
+                { original: 'secret', replacement: 'classified' },
+                { original: 'password', replacement: 'passcode' }
+            ])
+        });
+
+        const result = applyRedactionRules('This is a secret and here is a password');
+        expect(result).toBe('This is a classified and here is a passcode');
+    });
+
+    test('uses redactedN for strings without a specified replacement', () => {
+        getConfigurationMock.mockReturnValueOnce({
+            get: jest.fn().mockReturnValueOnce([
+                { original: 'username' },
+                { original: 'email' }
+            ])
+        });
+
+        const result = applyRedactionRules('username and email are redacted');
+        expect(result).toBe('redacted1 and redacted2 are redacted');
+    });
+
+    // ... other tests ...
 });
