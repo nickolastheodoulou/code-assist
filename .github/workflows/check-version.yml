@@ -1,0 +1,70 @@
+name: Check Package Version and README Update
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  version-and-readme-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out PR branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Get version from PR branch
+        id: pr_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Version from PR branch: $VERSION"
+          echo "::set-output name=VERSION::$VERSION"
+
+      - name: Check out main branch
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          fetch-depth: 0
+
+      - name: Fetch PR branch
+        run: git fetch origin ${{ github.head_ref }}
+
+      - name: Check README.md in PR branch
+        id: pr_readme
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          README_DIFF=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep 'README.md' && echo 'true' || echo 'false')
+          echo "README_UPDATED=$README_DIFF" >> $GITHUB_ENV
+      
+
+      - name: Get version from main branch
+        id: main_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Version from main branch: $VERSION"
+          echo "::set-output name=VERSION::$VERSION"
+
+      - name: Compare versions and check README.md
+        run: |
+          PR_VERSION=${{ steps.pr_version.outputs.VERSION }}
+          MAIN_VERSION=${{ steps.main_version.outputs.VERSION }}
+          README_UPDATED=${{ steps.pr_readme.outputs.UPDATED }}
+          
+          if [ "$PR_VERSION" = "$MAIN_VERSION" ]; then
+            echo "Version in package.json ($PR_VERSION) has not been incremented from the main branch version ($MAIN_VERSION)"
+            exit 1
+          fi
+
+          if [ "$README_UPDATED" = "false" ]; then
+            echo "README.md has not been updated."
+            exit 1
+          fi
+
+          echo "Checks passed. PR version: $PR_VERSION, Main branch version: $MAIN_VERSION, README updated: $README_UPDATED"

@@ -92,6 +92,8 @@ Currently no known issues found
     - Fix broken changes
 - 1.0.2
     - Implement CI for deployment of extension
+- 1.0.3
+    - Ensure ReadMe and package.json versioning updated as part of CI pipeline
 
 ## Frequently Asked Questions (FAQs)
 
