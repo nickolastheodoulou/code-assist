@@ -23,34 +23,31 @@ jobs:
       - name: Get version from PR branch
         id: pr_version
         run: |
-            VERSION=$(node -p "require('./package.json').version")
-            echo "Version from PR branch: $VERSION"
-            echo "::set-output name=VERSION::$VERSION"
-
-      - name: Check README.md in PR branch
-        id: pr_readme
-        run: |
-          git fetch origin main
-          README_CHANGED=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep -c 'README.md' || true)
-          if [ "$README_CHANGED" -gt 0 ]; then
-            echo "README.md has been updated."
-            echo "::set-output name=UPDATED::true"
-          else
-            echo "README.md has not been updated."
-            echo "::set-output name=UPDATED::false"
-          fi
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Version from PR branch: $VERSION"
+          echo "::set-output name=VERSION::$VERSION"
 
       - name: Check out main branch
         uses: actions/checkout@v2
         with:
           ref: 'main'
+          fetch-depth: 0
+
+      - name: Fetch PR branch
+        run: git fetch origin ${{ github.head_ref }}
+
+      - name: Check README.md in PR branch
+        id: pr_readme
+        run: |
+          README_DIFF=$(git diff --name-only origin/main...${{ github.sha }} | grep 'README.md' && echo 'true' || echo 'false')
+          echo "::set-output name=UPDATED::$README_DIFF"
 
       - name: Get version from main branch
         id: main_version
         run: |
-            VERSION=$(node -p "require('./package.json').version")
-            echo "Version from main branch: $VERSION"
-            echo "::set-output name=VERSION::$VERSION"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Version from main branch: $VERSION"
+          echo "::set-output name=VERSION::$VERSION"
 
       - name: Compare versions and check README.md
         run: |
