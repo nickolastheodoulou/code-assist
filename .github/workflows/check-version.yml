@@ -1,4 +1,4 @@
-name: Check Package Version and README Update
+name: Check Package Version and CHANGELOG_UPDATED Update
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  version-and-readme-check:
+  version-and-changelog-check:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,12 +36,12 @@ jobs:
       - name: Fetch PR branch
         run: git fetch origin ${{ github.head_ref }}
 
-      - name: Check README.md in PR branch
-        id: pr_readme
+      - name: Check CHANGELOG.md in PR branch
+        id: pr_changelog
         run: |
           git fetch origin ${{ github.base_ref }}
-          README_DIFF=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep 'README.md' && echo 'true' || echo 'false')
-          echo "README_UPDATED=$README_DIFF" >> $GITHUB_ENV
+          CHANGELOG_DIFF=$(git diff --name-only FETCH_HEAD ${{ github.sha }} | grep 'CHANGELOG.md' && echo 'true' || echo 'false')
+          echo "CHANGELOG_UPDATED=$CHANGELOG_DIFF" >> $GITHUB_ENV
       
 
       - name: Get version from main branch
@@ -51,20 +51,20 @@ jobs:
           echo "Version from main branch: $VERSION"
           echo "::set-output name=VERSION::$VERSION"
 
-      - name: Compare versions and check README.md
+      - name: Compare versions and check CHANGELOG.md
         run: |
           PR_VERSION=${{ steps.pr_version.outputs.VERSION }}
           MAIN_VERSION=${{ steps.main_version.outputs.VERSION }}
-          README_UPDATED=${{ steps.pr_readme.outputs.UPDATED }}
+          CHANGELOG_UPDATED=${{ steps.pr_changelog.outputs.UPDATED }}
           
           if [ "$PR_VERSION" = "$MAIN_VERSION" ]; then
             echo "Version in package.json ($PR_VERSION) has not been incremented from the main branch version ($MAIN_VERSION)"
             exit 1
           fi
 
-          if [ "$README_UPDATED" = "false" ]; then
-            echo "README.md has not been updated."
+          if [ "$CHANGELOG_UPDATED" = "false" ]; then
+            echo "CHANGELOG_UPDATED.md has not been updated."
             exit 1
           fi
 
-          echo "Checks passed. PR version: $PR_VERSION, Main branch version: $MAIN_VERSION, README updated: $README_UPDATED"
+          echo "Checks passed. PR version: $PR_VERSION, Main branch version: $MAIN_VERSION, CHANGELOG updated: $CHANGELOG_UPDATED_UPDATED"
