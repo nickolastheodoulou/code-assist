@@ -13,15 +13,14 @@ function applyRedactionRules(text: string): string {
   let redactionCount = 0;
 
   redactionRules.forEach((rule) => {
+    const originalPattern = new RegExp(rule.original, "gi"); // "i" flag for case-insensitivity
     const replacement = rule.replacement || `redacted${++redactionCount}`;
-    redactedText = redactedText.replace(
-      new RegExp(rule.original, "g"),
-      replacement
-    );
+    redactedText = redactedText.replace(originalPattern, replacement);
   });
 
   return redactedText;
 }
+
 
 /*
 TODO consider adding

@@ -1,5 +1,6 @@
 ## Release Notes
-
+- 1.0.9
+    - Allow case insensitivity for redaction 
 - 1.0.8
     - Make backwards Compatible With Different VS Code Versions
 - 1.0.7
