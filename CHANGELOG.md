@@ -1,9 +1,15 @@
-# Change Log
+## Release Notes
 
-All notable changes to the **Code Prompt Assist** extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- 1.0.5
+    - Move Release Notes To Changelong
+- 1.0.4
+    - Improve documentation
+- 1.0.3
+    - Ensure ReadMe and package.json versioning updated as part of CI pipeline
+- 1.0.2
+    - Implement CI for deployment of extension
+- 1.0.1
+    - Fix broken changes
+- 1.0.0
+    - Initial release with code solution generation, unit test creation, and code optimization features.
+    - Settings available to redact strings from the prompt settings
