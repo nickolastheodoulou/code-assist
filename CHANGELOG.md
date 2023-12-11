@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.10
+    - Fix bug where navigating away from tab didn't save the user settings
 - 1.0.9
     - Allow case insensitivity for redaction 
 - 1.0.8

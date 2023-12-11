@@ -3,7 +3,7 @@
   "publisher": "NickolasTheodoulou",
   "displayName": "code-prompt-assist",
   "description": "code prompt assist from workspace",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "engines": {
     "vscode": "^1.0.0"
   },
