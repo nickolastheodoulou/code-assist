@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { getTitleFromPromptType } from "./getTitleFromPromptType";
+import { getTitleFromPromptType } from "../utils/prompt/getTitleFromPromptType";
 import { PromptType } from '../__types__/types';
-import { processFiles } from './fileSystem';
 
 const getFormHtml = (promptType: string): string => {
     return `<!DOCTYPE html>
@@ -217,3 +216,7 @@ export {
     openForm,
     getFormHtml
 };
+
+function processFiles(arg0: any, webview: vscode.Webview) {
+        throw new Error('Function not implemented.');
+    }

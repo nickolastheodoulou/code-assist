@@ -1,9 +1,9 @@
 import { PromptType } from "../../__types__/types";
-import { getTitleFromPromptType } from "../getTitleFromPromptType";
+import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
 import { getFormHtml, openForm } from "../webviewManager";
 import * as vscode from 'vscode';
 
-jest.mock('../getTitleFromPromptType', () => ({
+jest.mock('../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
 }));
 

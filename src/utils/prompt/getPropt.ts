@@ -1,4 +1,4 @@
-import { GetPrompt, PromptType } from "../__types__/types";
+import { GetPrompt, PromptType } from "../../__types__/types";
 
 import * as vscode from "vscode";
 

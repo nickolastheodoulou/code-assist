@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { PromptType } from "../../__types__/types";
+import { PromptType } from "../../../__types__/types";
 import { getPropt, applyRedactionRules } from "../getPropt";
 
 jest.mock('vscode', () => ({

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { CodeAssistTreeProvider } from './utils/treeView';
-import { openForm } from './utils/webviewManager';
+import { CodeAssistTreeProvider } from './views/treeView';
+import { openForm } from './views/webviewManager';
 
 
 export function activate(context: vscode.ExtensionContext) {

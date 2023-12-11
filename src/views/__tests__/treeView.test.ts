@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { CodeAssistTreeItem } from '../treeView'
+import { CodeAssistTreeItem } from '../treeView';
 
 jest.mock('vscode', () => ({
     TreeItem: jest.fn(),

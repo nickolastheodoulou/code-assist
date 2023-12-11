@@ -1,4 +1,4 @@
-import { generateFileTree } from "../fileSystem";
+import { generateFileTree } from "../generateFileTree";
 
 import * as fs from "fs";
 
