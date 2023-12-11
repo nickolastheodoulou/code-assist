@@ -58,16 +58,15 @@ Tip: Witness Code Prompt Assist's capabilities through these short, focused anim
 Requirements
 
 ### Feature 1: Effortless Code Solutions
-![Effortless Code Solutions](/readme/ExtensionGuide.gif)
+![Effortless Code Solutions](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/ExtensionGuide.gif)
 _Crafting precise code solutions with ease - see how Code Prompt Assist automates and simplifies complex tasks._
 
-
 ### Feature 2: Redacted Unit Test Generation
-![Redact Prompt And Generate Unit Tests](/readme/UnitTests.png)
+![Redact Prompt And Generate Unit Tests](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/UnitTests.png)
 _Reliability at its best - our extension automatically generates comprehensive readacted promps for unit tests._
 
 ### Feature 3: Redacted Code Optimisation
-![Automated Unit Test Generation](/readme/UnitTests.png)
+![Automated Unit Test Generation](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/CodeOptimisations.png)
 _Reliability at its best - our extension automatically generates comprehensive readacted promps for code optimisation._
 
 ## Before installing Code Prompt Assist, ensure you have the following
@@ -131,7 +130,7 @@ This extension contributes the following settings which can be added to your `.v
 
 5. **Verify Installation**: Once installed, you will see 'Code Prompt Assist' listed in your installed extensions.
 
-![Redact Prompt And Generate Unit Tests](/readme/GenerateCodeSolution.png)
+![Redact Prompt And Generate Unit Tests](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/GenerateCodeSolution.png)
 _Screenshot of the Extensions view in VS Code, highlighting the search and install steps._
 
 
@@ -140,19 +139,6 @@ _Screenshot of the Extensions view in VS Code, highlighting the search and insta
 
 Currently no known issues found
 
-## Release Notes
-
-- 1.0.0
-    - Initial release with code solution generation, unit test creation, and code optimization features.
-    - Settings available to redact strings from the prompt settings
-- 1.0.1
-    - Fix broken changes
-- 1.0.2
-    - Implement CI for deployment of extension
-- 1.0.3
-    - Ensure ReadMe and package.json versioning updated as part of CI pipeline
-- 1.0.4
-    - Improve documentation
 
 ## Frequently Asked Questions (FAQs)
 

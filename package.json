@@ -3,9 +3,12 @@
   "publisher": "NickolasTheodoulou",
   "displayName": "code-prompt-assist",
   "description": "code prompt assist from workspace",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "engines": {
     "vscode": "^1.85.0"
+  },
+  "changelog": {
+    "path": "./CHANGELOG.md"
   },
   "icon": "media/icon.png",
   "repository": {
