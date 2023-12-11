@@ -165,6 +165,11 @@ const getFormHtml = (promptType: string): string => {
         document.getElementById('files').addEventListener('change', saveState);
         document.getElementById('ticket-info').addEventListener('change', saveState);
 
+        // Add event listeners to capture input changes and save state on window change
+        document.getElementById('files').addEventListener('input', saveState);
+        document.getElementById('ticket-info').addEventListener('input', saveState);
+
+
         function copyToClipboard() {
             const outputText = document.getElementById('output').textContent;
             const el = document.createElement('textarea');
@@ -180,7 +185,7 @@ const getFormHtml = (promptType: string): string => {
     </script>
 </body>
 </html>`;
-}
+};
 
 type OpenForm = (
     promptType: PromptType,
