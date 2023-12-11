@@ -30,6 +30,10 @@ class CodeAssistTreeProvider
     } else {
       // Root items
       return Promise.resolve([
+        createTreeItem("0. Configure Redaction Settings", {
+          command: "code-prompt-assist.openSettings",
+          title: "Create Redaction Rules",
+        }),
         createTreeItem("1. Generate Code Solution", {
           command: "code-prompt-assist.openForm",
           title: "Open Form",

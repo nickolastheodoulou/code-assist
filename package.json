@@ -21,6 +21,12 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+          "command": "code-prompt-assist.openSettings",
+          "title": "Code Prompt Assist Settings"
+      }
+    ],
     "properties": {
       "codeAssist.redactionRules": {
         "type": "array",

@@ -12,6 +12,14 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(openFormCommand);
+
+    const openSettingsCommand = vscode.commands.registerCommand('code-prompt-assist.openSettings', () => {
+        // Open a custom settings UI or a dedicated settings file
+        // For demonstration purposes, we'll show a simple notification
+        vscode.window.showInformationMessage('Open your extension settings UI or file here.');
+    });
+
+    context.subscriptions.push(openSettingsCommand);
 }
 
 

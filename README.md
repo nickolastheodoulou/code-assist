@@ -104,7 +104,7 @@ This extension contributes the following settings which can be added to your `.v
 
 ### How To Configure
 
-1. **Open Your Workspace Settings**: Go to your project workspace in VSCode. Press `Ctrl +` , (or `Cmd +` , on macOS) to open Settings.
+1. **Open Your Workspace Settings**: Go to your project workspace in VSCode. Press `Ctrl ,` , (or `Cmd ,` , on macOS) to open Settings.
 2. **Edit settings.json**: Click on the {} icon in the top right corner to open the `settings.json` file.
 3. **Add Redaction Rules**: Add the `codeAssist.redactionRules` configuration with the desired rules as shown in the example above.
 4. **Save the Changes**: Save your `settings.json` file. The extension will now use these rules to redact strings in the generated code.
