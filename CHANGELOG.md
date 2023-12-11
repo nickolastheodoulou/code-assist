@@ -1,5 +1,7 @@
 ## Release Notes
 
+- 1.0.6
+    - Make backwards Compatible With Different VS Code Versions
 - 1.0.5
     - Move Release Notes To Changelong
 - 1.0.4
