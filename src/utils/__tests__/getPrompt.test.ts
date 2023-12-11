@@ -72,7 +72,7 @@ describe('applyRedactionRules', () => {
             ])
         });
 
-        const result = applyRedactionRules('This is a secret and here is a password');
+        const result = applyRedactionRules('This is a Secret and here is a PassWord');
         expect(result).toBe('This is a classified and here is a passcode');
     });
 
@@ -84,9 +84,8 @@ describe('applyRedactionRules', () => {
             ])
         });
 
-        const result = applyRedactionRules('username and email are redacted');
+        const result = applyRedactionRules('UserNAME and EmAiL are redacted');
         expect(result).toBe('redacted1 and redacted2 are redacted');
     });
 
-    // ... other tests ...
 });
