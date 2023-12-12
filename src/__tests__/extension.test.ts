@@ -16,11 +16,19 @@ jest.mock("../views/treeView/treeView", () => ({
 }));
 
 jest.mock("../views/webView/webviewManager", () => ({
-  openForm: jest.fn(),
+  openForm: jest.fn().mockImplementation(() => ({
+    onDidDispose: jest.fn(),
+    reveal: jest.fn(),
+  })),
 }));
 
 describe("Extension", () => {
-  const mockContext = { subscriptions: [] };
+  let mockContext: vscode.ExtensionContext;
+
+  beforeEach(() => {
+    mockContext = { subscriptions: [] } as unknown as vscode.ExtensionContext;
+    (openForm as jest.Mock).mockClear();
+  });
 
   it("activates correctly", () => {
     activate(mockContext as unknown as vscode.ExtensionContext);

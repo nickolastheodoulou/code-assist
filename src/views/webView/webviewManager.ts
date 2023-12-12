@@ -211,6 +211,7 @@ const openForm: OpenForm = (promptType, context) => {
         undefined,
         context.subscriptions
     );
+    return panel
 };
 
 export {
