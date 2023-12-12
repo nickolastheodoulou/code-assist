@@ -44,7 +44,7 @@ const getHtml = (): string => {
     document.getElementById('addRule').addEventListener('click', addRule);
 
     let previousState = vscode.getState() || { rules: {} };
-    displayRules(previousState.rules);
+        displayRules(previousState.rules);
 
     function addRule() {
         const original = originalTextInput.value.trim();
@@ -62,23 +62,23 @@ const getHtml = (): string => {
 
     function displayRules(rules) {
         rulesList.innerHTML = '';
-        Object.entries(rules).forEach(([original, replacement], index) => {
+                Object.entries(rules).forEach(([original, replacement], index) => {
             displayRule({ original, replacement }, index);
         });
     }
 
 
         function displayRule(rule, index) {
-            const listItem = document.createElement('li');
+                        const listItem = document.createElement('li');
             listItem.classList.add('rule');
             listItem.textContent = \`\${rule.original} -> \${rule.replacement || 'redactedN'}\`;
-
+        
             const deleteButton = document.createElement('span');
             deleteButton.textContent = 'Delete';
             deleteButton.classList.add('deleteButton');
-            deleteButton.onclick = function() { deleteRule(index); };
+            deleteButton.onclick = function() { deleteRule(rule.original); };
             listItem.appendChild(deleteButton);
-
+        
             rulesList.appendChild(listItem);
         }
 
@@ -86,7 +86,7 @@ const getHtml = (): string => {
             delete previousState.rules[original];
             displayRules(previousState.rules);
             updateState();
-        }
+        }        
 
         function updateState() {
             vscode.setState(previousState);
@@ -95,7 +95,7 @@ const getHtml = (): string => {
 
         function loadPersistedRules(rules) {
             previousState.rules = rules;
-            displayRules(rules);
+            updateState(rules);
         }
 
         window.addEventListener('message', event => {
