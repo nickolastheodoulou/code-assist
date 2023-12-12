@@ -1,5 +1,7 @@
 ## Release Notes
-- 1.0.11
+- 1.0.13
+    - Prevent multiple windows being opened
+- 1.0.12
     - Persist state when vs-code closed for settings
 - 1.0.11
     - Fix versioning for release
