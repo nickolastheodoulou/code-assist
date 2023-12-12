@@ -96,33 +96,33 @@ describe("getPropt", () => {
 
 describe("applyRedactionRules", () => {
   beforeEach(() => {
-    getMock.mockReset();
-    updateMock.mockReset();
+      getMock.mockReset();
+      updateMock.mockReset();
   });
 
   test("replaces specified strings with their replacements", () => {
-    getMock.mockReturnValueOnce([
-      { original: "secret", replacement: "classified" },
-      { original: "password", replacement: "passcode" },
-    ]);
+      getMock.mockReturnValueOnce({
+          "secret": "classified",
+          "password": "passcode",
+      });
 
-    const result = applyRedactionRules(
-      "This is a Secret and here is a PassWord",
-      mockExtensionContext
-    );
-    expect(result).toBe("This is a classified and here is a passcode");
+      const result = applyRedactionRules(
+          "This is a Secret and here is a PassWord",
+          mockExtensionContext
+      );
+      expect(result).toBe("This is a classified and here is a passcode");
   });
 
   test("uses redactedN for strings without a specified replacement", () => {
-    getMock.mockReturnValueOnce([
-      { original: "username" },
-      { original: "email" },
-    ]);
+      getMock.mockReturnValueOnce({
+          "username": "",
+          "email": "",
+      });
 
-    const result = applyRedactionRules(
-      "UserNAME and EmAiL are redacted",
-      mockExtensionContext
-    );
-    expect(result).toBe("redacted1 and redacted2 are redacted");
+      const result = applyRedactionRules(
+          "UserNAME and EmAiL are redacted",
+          mockExtensionContext
+      );
+      expect(result).toBe("redacted1 and redacted2 are redacted");
   });
 });

@@ -43,23 +43,30 @@ const getHtml = (): string => {
     const replacementTextInput = document.getElementById('replacementText');
     document.getElementById('addRule').addEventListener('click', addRule);
 
-    let previousState = vscode.getState() || { rules: [] };
-    previousState.rules.forEach(displayRule);
+    let previousState = vscode.getState() || { rules: {} };
+    displayRules(previousState.rules);
 
-        function addRule() {
-            const original = originalTextInput.value.trim();
-            const replacement = replacementTextInput.value.trim();
+    function addRule() {
+        const original = originalTextInput.value.trim();
+        const replacement = replacementTextInput.value.trim();
 
-            if (original) {
-                const rule = { original, replacement };
-                previousState.rules.push(rule);
-                displayRule(rule);
+        if (original) {
+            previousState.rules[original] = replacement;
+            displayRules(previousState.rules);
 
-                originalTextInput.value = '';
-                replacementTextInput.value = '';
-                updateState();
-            }
+            originalTextInput.value = '';
+            replacementTextInput.value = '';
+            updateState();
         }
+    }
+
+    function displayRules(rules) {
+        rulesList.innerHTML = '';
+        Object.entries(rules).forEach(([original, replacement], index) => {
+            displayRule({ original, replacement }, index);
+        });
+    }
+
 
         function displayRule(rule, index) {
             const listItem = document.createElement('li');
@@ -75,26 +82,20 @@ const getHtml = (): string => {
             rulesList.appendChild(listItem);
         }
 
-        function deleteRule(index) {
-            previousState.rules.splice(index, 1);
-            rulesList.innerHTML = '';
-            previousState.rules.forEach(displayRule);
+        function deleteRule(original) {
+            delete previousState.rules[original];
+            displayRules(previousState.rules);
             updateState();
         }
 
         function updateState() {
             vscode.setState(previousState);
-            // Send updated state to VS Code
             vscode.postMessage({ command: 'updateRules', data: previousState.rules });
         }
 
         function loadPersistedRules(rules) {
-            rulesList.innerHTML = '';  // Clear existing rules
-            rules.forEach(rule => {
-                displayRule(rule);
-            });
             previousState.rules = rules;
-            updateState();
+            displayRules(rules);
         }
 
         window.addEventListener('message', event => {

@@ -8,15 +8,15 @@ type RedactionRules = {
 }[];
 
 function applyRedactionRules(text: string, context: vscode.ExtensionContext): string {
-  const redactionRules:RedactionRules = context.globalState.get("redactionRules", []);
+  const redactionRules: { [original: string]: string } = context.globalState.get("redactionRules", {});
 
   let redactedText = text;
   let redactionCount = 0;
 
-  redactionRules.forEach((rule) => {
-    const originalPattern = new RegExp(rule.original, "gi"); // "i" flag for case-insensitivity
-    const replacement = rule.replacement || `redacted${++redactionCount}`;
-    redactedText = redactedText.replace(originalPattern, replacement);
+  Object.entries(redactionRules).forEach(([original, replacement]) => {
+      const originalPattern = new RegExp(original, "gi");
+      const effectiveReplacement = replacement || `redacted${++redactionCount}`;
+      redactedText = redactedText.replace(originalPattern, effectiveReplacement);
   });
 
   return redactedText;
