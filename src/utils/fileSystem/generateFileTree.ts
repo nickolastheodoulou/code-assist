@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-export function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
+function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
     if (level > maxDepth || !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
         return '';
     }
@@ -22,3 +22,7 @@ export function generateFileTree(dirPath: string, level: number = 0, maxDepth: n
 
     return tree;
 }
+
+export {
+    generateFileTree
+};

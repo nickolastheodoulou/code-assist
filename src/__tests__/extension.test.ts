@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { activate, deactivate } from "../extension";
-import { openForm } from "../views/webviewManager";
+import { openForm } from "../views/webView/webviewManager";
 
 jest.mock("vscode", () => ({
   commands: {
@@ -11,11 +11,11 @@ jest.mock("vscode", () => ({
   },
 }));
 
-jest.mock("../views/treeView", () => ({
+jest.mock("../views/treeView/treeView", () => ({
   CodeAssistTreeProvider: jest.fn().mockImplementation(() => ({})),
 }));
 
-jest.mock("../views/webviewManager", () => ({
+jest.mock("../views/webView/webviewManager", () => ({
   openForm: jest.fn(),
 }));
 

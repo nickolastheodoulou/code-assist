@@ -1,14 +1,15 @@
-import { GetPrompt, PromptType } from "../../__types__/types";
-
 import * as vscode from "vscode";
 
-function applyRedactionRules(text: string): string {
-  const redactionRules = vscode.workspace
-    .getConfiguration()
-    .get<{ original: string; replacement?: string }[]>(
-      "codeAssist.redactionRules",
-      []
-    );
+import { GetPrompt, PromptType } from "../../__types__/types";
+
+type RedactionRules = {
+  original: string,
+  replacement: string
+}[];
+
+function applyRedactionRules(text: string, context: vscode.ExtensionContext): string {
+  const redactionRules:RedactionRules = context.globalState.get("redactionRules", []);
+
   let redactedText = text;
   let redactionCount = 0;
 
@@ -21,7 +22,6 @@ function applyRedactionRules(text: string): string {
   return redactedText;
 }
 
-
 /*
 TODO consider adding
     Context: [Add any additional context about the environment or technologies used]
@@ -33,7 +33,8 @@ const getPropt: GetPrompt = (
   codeInput,
   rootDir,
   fileTree,
-  promptType
+  promptType,
+  context
 ) => {
   let promptMessage = "";
 
@@ -73,7 +74,7 @@ const getPropt: GetPrompt = (
   Ideally I'd want to get to a point that I can raise an MR with the suggestions prodived
   `;
 
-  return applyRedactionRules(nonRedactedPrompt);
+  return applyRedactionRules(nonRedactedPrompt, context);
 };
 
 export { getPropt, applyRedactionRules };

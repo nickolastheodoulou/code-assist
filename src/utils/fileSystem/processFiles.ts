@@ -6,7 +6,7 @@ import { getPropt } from "../prompt/getPropt";
 import { generateFileTree } from "./generateFileTree";
 
 
-async function processFiles(data: { files: string; ticketInfo: string; promptType: PromptType; }, webview: vscode.Webview) {
+async function processFiles(data: { files: string; ticketInfo: string; promptType: PromptType; }, webview: vscode.Webview, context: vscode.ExtensionContext) {
     const { files, ticketInfo, promptType } = data;
     const fileNames = files.split(',').map(file => file.trim());
 
@@ -41,7 +41,7 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
             if (!token.isCancellationRequested) {
                 const rootDir = path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0]));
                 const fileTree = generateFileTree(rootDir);
-                const output = getPropt(ticketInfo, codeInput, rootDir, fileTree, promptType);
+                const output = getPropt(ticketInfo, codeInput, rootDir, fileTree, promptType, context);
                 webview.postMessage({ command: 'displayOutput', output });
             }
         });
@@ -50,3 +50,7 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
         vscode.window.showErrorMessage(error.message || 'An error occurred while processing files.');
     }
 }
+
+export {
+    processFiles
+};

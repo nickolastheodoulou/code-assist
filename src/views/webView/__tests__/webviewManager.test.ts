@@ -1,9 +1,9 @@
-import { PromptType } from "../../__types__/types";
-import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
-import { getFormHtml, openForm } from "../webviewManager";
+import { PromptType } from "../../../__types__/types";
+import { getTitleFromPromptType } from "../../../utils/prompt/getTitleFromPromptType";
 import * as vscode from 'vscode';
+import { getFormHtml, openForm } from "../webviewManager";
 
-jest.mock('../../utils/prompt/getTitleFromPromptType', () => ({
+jest.mock('../../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
 }));
 
@@ -15,6 +15,16 @@ jest.mock('vscode', () => ({
         One: 1, // Mocking ViewColumn.One
     },
 }));
+
+const getMock = jest.fn();
+const updateMock = jest.fn();
+
+const mockExtensionContext = {
+    globalState: {
+      get: getMock,
+      update: updateMock,
+    },
+  } as unknown as vscode.ExtensionContext;
 
 describe('getFormHtml', () => {
     it('returns the correct HTML for a given prompt type', () => {
@@ -28,6 +38,9 @@ describe('getFormHtml', () => {
 });
 
 describe('openForm', () => {
+    beforeEach(() => {
+        getMock.mockReturnValueOnce([]);
+      });
     it('creates a webview panel and sets up message handling', () => {
         const mockPanel = {
             webview: {
@@ -39,7 +52,7 @@ describe('openForm', () => {
         };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
-        openForm(PromptType.CODE_SOLUTION, {});
+        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
 
         expect(vscode.window.createWebviewPanel).toHaveBeenCalledWith(
             'formView',

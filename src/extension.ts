@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { CodeAssistTreeProvider } from './views/treeView';
-import { openForm } from './views/webviewManager';
+import { CodeAssistTreeProvider } from './views/treeView/treeView';
+import { openForm } from './views/webView/webviewManager';
+import { openSettings } from './views/settings/settingsView';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -16,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
     const openSettingsCommand = vscode.commands.registerCommand('code-prompt-assist.openSettings', () => {
         // Open a custom settings UI or a dedicated settings file
         // For demonstration purposes, we'll show a simple notification
-        vscode.window.showInformationMessage('Open your extension settings UI or file here.');
+        openSettings(context);
     });
 
     context.subscriptions.push(openSettingsCommand);
