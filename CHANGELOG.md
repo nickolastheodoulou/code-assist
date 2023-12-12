@@ -1,5 +1,7 @@
 ## Release Notes
 - 1.0.11
+    - Persist state when vs-code closed for settings
+- 1.0.11
     - Fix versioning for release
 - 1.0.10
     - Fix bug where navigating away from tab didn't save the user settings
