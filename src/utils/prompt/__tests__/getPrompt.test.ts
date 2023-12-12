@@ -110,7 +110,7 @@ describe("applyRedactionRules", () => {
       "This is a Secret and here is a PassWord",
       mockExtensionContext
     );
-    expect(result).toBe("This is a classified and here is a passcode");
+    expect(result).toBe("This is a <span class=\"redacted\">classified</span> and here is a <span class=\"redacted\">passcode</span>");
   });
 
   test("uses redactedN for strings without a specified replacement", () => {
@@ -123,6 +123,6 @@ describe("applyRedactionRules", () => {
       "UserNAME and EmAiL are redacted",
       mockExtensionContext
     );
-    expect(result).toBe("redacted1 and redacted2 are redacted");
+    expect(result).toBe("<span class=\"redacted\">redacted</span> and <span class=\"redacted\">redacted</span> are redacted");
   });
 });

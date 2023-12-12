@@ -80,6 +80,9 @@ const getFormHtml = (promptType: string): string => {
         #copyButton:hover {
             background-color: #005a9e;
         }
+        .redacted {
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -156,7 +159,7 @@ const getFormHtml = (promptType: string): string => {
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
-                    document.getElementById('output').textContent = event.data.output;
+                    document.getElementById('output').innerHTML = event.data.output;
                     saveState();
                     break;
             }
@@ -211,7 +214,7 @@ const openForm: OpenForm = (promptType, context) => {
         undefined,
         context.subscriptions
     );
-    return panel
+    return panel;
 };
 
 export {

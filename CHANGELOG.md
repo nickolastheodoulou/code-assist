@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.15
+    - Highlight redacted code in green
 - 1.0.14
     - Prevent multiple definitions of the same rule
 - 1.0.13
