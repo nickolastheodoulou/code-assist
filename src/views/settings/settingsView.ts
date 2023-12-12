@@ -145,6 +145,8 @@ const openSettings: OpenSettings = (context) => {
         undefined,
         context.subscriptions
     );
+
+    return panel;
 };
 
 export {
