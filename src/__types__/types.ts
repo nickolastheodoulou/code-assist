@@ -1,3 +1,5 @@
+import * as vscode from "vscode";
+
 type CodeInput = {
     fileName: string,
     fileContent: string
@@ -13,7 +15,8 @@ type GetPrompt = (
     codeInput: CodeInput,
     rootDir: string,
     fileTree: string,
-    promptType: PromptType
+    promptType: PromptType,
+    context: vscode.ExtensionContext
 ) => string;
 
 

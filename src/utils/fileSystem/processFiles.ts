@@ -1,32 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { CodeInput, PromptType } from "../__types__/types";
-import { getPropt } from "./getPropt";
+import { CodeInput, PromptType } from "../../__types__/types";
+import { getPropt } from "../prompt/getPropt";
+import { generateFileTree } from "./generateFileTree";
 
-function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
-    if (level > maxDepth || !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
-        return '';
-    }
 
-    let tree = '';
-    const files = fs.readdirSync(dirPath);
-
-    for (const file of files) {
-        if (file === 'node_modules') {
-            continue;
-        }
-        tree += ' '.repeat(level * 2) + file + '\n';
-        const filePath = path.join(dirPath, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            tree += generateFileTree(filePath, level + 1, maxDepth);
-        }
-    }
-
-    return tree;
-}
-
-async function processFiles(data: { files: string; ticketInfo: string; promptType: PromptType; }, webview: vscode.Webview) {
+async function processFiles(data: { files: string; ticketInfo: string; promptType: PromptType; }, webview: vscode.Webview, context: vscode.ExtensionContext) {
     const { files, ticketInfo, promptType } = data;
     const fileNames = files.split(',').map(file => file.trim());
 
@@ -61,7 +41,7 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
             if (!token.isCancellationRequested) {
                 const rootDir = path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0]));
                 const fileTree = generateFileTree(rootDir);
-                const output = getPropt(ticketInfo, codeInput, rootDir, fileTree, promptType);
+                const output = getPropt(ticketInfo, codeInput, rootDir, fileTree, promptType, context);
                 webview.postMessage({ command: 'displayOutput', output });
             }
         });
@@ -71,8 +51,6 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
     }
 }
 
-
 export {
-    generateFileTree,
     processFiles
 };

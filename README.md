@@ -13,6 +13,10 @@ Whether you're an experienced developer or a newcomer, leverage Code Prompt Assi
 
 ## Features
 
+### 0. Effortless Prompt Redaction
+
+**Streamline Your Security Practices with Ease**: Code Prompt Assist introduces a revolutionary approach to maintaining confidentiality in your coding environment. Our Effortless Prompt Redaction feature allows you to define rules for automatically redacting sensitive information like API keys or personal identifiers from your code. This not only saves time but also significantly enhances the security of your development process. With a few simple configurations, you can ensure that your code remains clean and compliant, free from unintended exposure of critical data.
+
 ### 1. Effortless Code Solutions
 
 **Save Time and Simplify Your Workflow:** Code Prompt Assist streamlines your coding process by generating code solutions automatically. Just input your file paths and ticket information, and watch as Code Prompt Assist efficiently crafts solutions tailored to your project’s specific needs.
@@ -50,12 +54,17 @@ We are proud of the positive impact Code Prompt Assist has had on our users. Her
 
 Explore how Code Prompt Assist transforms your coding experience with our carefully curated visuals. Each image and animation is designed to give you a glimpse of the power and simplicity of our tool.
 
+0. Add in settings for redaction
 1. Code Solution Generation: Code Solution Generation
 2. Unit Test Creation: Unit Test Creation
 3. Code Optimization Suggestions: Code Optimization
 
 Tip: Witness Code Prompt Assist's capabilities through these short, focused animations, demonstrating its ease of use and powerful features.
 Requirements
+
+### Feature 0: Effortless Prompt Redaction
+![Effortless Prompt Redaction](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/redaction.png)
+_Crafting precise code prompts with ease - see how Code Prompt Assist automates code redaction._
 
 ### Feature 1: Effortless Code Solutions
 ![Effortless Code Solutions](https://raw.githubusercontent.com/nickolastheodoulou/code-assist-public/main/public/ExtensionGuide.gif)
@@ -75,48 +84,42 @@ _Reliability at its best - our extension automatically generates comprehensive r
 
 ## This extension contributes to the following settings
 
-This extension contributes the following settings which can be added to your `.vscode/settings.json` file:
+### Redaction Rules
 
-- `codeAssist.redactionRules`: This setting allows you to specify a list of rules for redacting strings in the generated code. Each rule consists of an `original` string and an optional `replacement` string. If the `replacement` string is not provided, the extension will automatically use a default format: `redactedN`, where `N` is a unique number for each redacted string.
 
-### Example Configuration
+#### How To Configure Redaction Rules
 
-```json
-{
-    "codeAssist.redactionRules": [
-        {
-            "original": "apiKey",
-            "replacement": "confidentialKey"
-        },
-        {
-            "original": "username"
-            // No replacement is provided for "username",
-            // so it will be replaced with "redacted1", "redacted2", etc., 
-            // based on its occurrence.
-        },
-        {
-            "original": "password",
-            // Again, no replacement provided. This will follow the redactedN pattern.
-        }
-    ]
-}
-```
+1. **Open Redaction Settings Tab**: In Visual Studio Code, navigate to the Code Assist extension and open the 'Configure Redaction Settings' tab.
+2. **Enter Redaction Rules**: 
+  - **Original Text**: Enter the text string you wish to redact.
+  - **Replacement Text** (optional): Enter the text you want to replace the original text with. If left empty, the extension will automatically use a placeholder in the format `redactedN``.
+  - Click **Add Rule** to save the rule.
+3. **Manage Rules**: The added rules will be listed in the tab. You can review and manage these rules directly from this interface.
+4. **Apply Changes**: The extension will automatically apply these rules to redact strings in the generated code according to your configuration.
 
-### How To Configure
+#### Understanding the Configuration:
 
-1. **Open Your Workspace Settings**: Go to your project workspace in VSCode. Press `Ctrl +` , (or `Cmd +` , on macOS) to open Settings.
-2. **Edit settings.json**: Click on the {} icon in the top right corner to open the `settings.json` file.
-3. **Add Redaction Rules**: Add the `codeAssist.redactionRules` configuration with the desired rules as shown in the example above.
-4. **Save the Changes**: Save your `settings.json` file. The extension will now use these rules to redact strings in the generated code.
+- **Original Text**: This is the string that you want to redact from the code.
+- **Replacement Text** (Optional): This is what will replace the Original Text in the code. If you do not specify a replacement, the extension uses a default format: `redactedN`, where `N` is a unique number.
+- The extension applies the replacement to all occurrences of the `Original Text` in the generated code.
+- Using the `redactedN` format ensures each unique redacted string has a distinct placeholder.
 
-### Understanding the Configuration:
+#### Example
 
-- Each rule in the `redactionRules` array consists of two properties:
-    - **original**: The string you want to redact.
-    - **replacement** (optional): The string to replace the `original` string. If omitted, the extension automatically uses a placeholder in the format `redactedN`.
-- The replacement is applied to all occurrences of the `original` string in the generated code.
-- The `redactedN` pattern ensures that each unique redacted string has a distinct placeholder, with `N` incrementing for each new original string without a specified replacement.
+Suppose you want to redact API keys and usernames in your code:
 
+Suppose you want to redact API keys and usernames in your code:
+
+- Open the Redaction Rules Settings tab.
+    - For API keys, you might add:
+      - Original Text: `apiKey`
+      - Replacement Text: `confidentialKey``
+    - For usernames, where you prefer an automatic placeholder:
+      -  Original Text: `username`
+      - Leave the Replacement Text blank.
+      - Click `Add Rule` after entering each set of texts.
+
+These rules ensure that any occurrence of "apiKey" in your code will be replaced with "confidentialKey", and "username" will be replaced with a placeholder like "redacted1".
 
 ## Installation Guide
 

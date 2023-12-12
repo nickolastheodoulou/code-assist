@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { getTitleFromPromptType } from "./getTitleFromPromptType";
-import { PromptType } from '../__types__/types';
-import { processFiles } from './fileSystem';
+import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
+import { PromptType } from '../../__types__/types';
+import { processFiles } from '../../utils/fileSystem/processFiles';
 
 const getFormHtml = (promptType: string): string => {
     return `<!DOCTYPE html>
@@ -137,7 +137,7 @@ const getFormHtml = (promptType: string): string => {
         function submitForm() {
             const files = document.getElementById('files').value;
             const ticketInfo = document.getElementById('ticket-info').value;
-
+          
             const errorMessage = validateInput(files, ticketInfo);
             if (errorMessage) {
                 displayError(errorMessage);
@@ -189,7 +189,7 @@ const getFormHtml = (promptType: string): string => {
 
 type OpenForm = (
     promptType: PromptType,
-    context: any
+    context: vscode.ExtensionContext
 ) => void;
 
 const openForm: OpenForm = (promptType, context) => {
@@ -205,7 +205,7 @@ const openForm: OpenForm = (promptType, context) => {
     panel.webview.onDidReceiveMessage(
         message => {
             if (message.command === 'submit') {
-                processFiles({ ...message.data, promptType }, panel.webview);
+                processFiles({ ...message.data, promptType }, panel.webview, context);
             }
         },
         undefined,
