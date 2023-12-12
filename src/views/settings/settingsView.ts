@@ -46,20 +46,35 @@ const getHtml = (): string => {
     let previousState = vscode.getState() || { rules: [] };
     previousState.rules.forEach(displayRule);
 
-        function addRule() {
-            const original = originalTextInput.value.trim();
-            const replacement = replacementTextInput.value.trim();
+    function renderRulesList() {
+        rulesList.innerHTML = '';
+        previousState.rules.forEach(displayRule);
+    }
 
-            if (original) {
+    function addRule() {
+        const original = originalTextInput.value.trim();
+        const replacement = replacementTextInput.value.trim();
+    
+        if (original) {
+            // Check if a rule with the same original text already exists
+            const existingRuleIndex = previousState.rules.findIndex(rule => rule.original === original);
+    
+            if (existingRuleIndex >= 0) {
+                // Update existing rule
+                previousState.rules[existingRuleIndex].replacement = replacement;
+            } else {
+                // Add new rule
                 const rule = { original, replacement };
                 previousState.rules.push(rule);
-                displayRule(rule);
-
-                originalTextInput.value = '';
-                replacementTextInput.value = '';
-                updateState();
             }
+    
+            // Re-render the rules list and clear inputs
+            renderRulesList();
+            originalTextInput.value = '';
+            replacementTextInput.value = '';
+            updateState();
         }
+    }
 
         function displayRule(rule, index) {
             const listItem = document.createElement('li');
@@ -144,9 +159,10 @@ const openSettings: OpenSettings = (context) => {
         undefined,
         context.subscriptions
     );
-    return panel
+    return panel;
 };
 
 export {
     openSettings,
+    getHtml,
 };

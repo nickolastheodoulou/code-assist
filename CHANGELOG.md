@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.14
+    - Prevent multiple definitions of the same rule
 - 1.0.13
     - Prevent multiple windows being opened
 - 1.0.12
