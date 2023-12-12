@@ -36,15 +36,15 @@ const getHtml = (): string => {
     </div>
 
     <script>
-        const vscode = acquireVsCodeApi();
-        
-        const rulesList = document.getElementById('rulesList');
-        const originalTextInput = document.getElementById('originalText');
-        const replacementTextInput = document.getElementById('replacementText');
-        document.getElementById('addRule').addEventListener('click', addRule);
+    const vscode = acquireVsCodeApi();
+    
+    const rulesList = document.getElementById('rulesList');
+    const originalTextInput = document.getElementById('originalText');
+    const replacementTextInput = document.getElementById('replacementText');
+    document.getElementById('addRule').addEventListener('click', addRule);
 
-        let previousState = vscode.getState() || { rules: [] };
-        previousState.rules.forEach(displayRule);
+    let previousState = vscode.getState() || { rules: [] };
+    previousState.rules.forEach(displayRule);
 
         function addRule() {
             const original = originalTextInput.value.trim();
@@ -87,6 +87,24 @@ const getHtml = (): string => {
             // Send updated state to VS Code
             vscode.postMessage({ command: 'updateRules', data: previousState.rules });
         }
+
+        function loadPersistedRules(rules) {
+            rulesList.innerHTML = '';  // Clear existing rules
+            rules.forEach(rule => {
+                displayRule(rule);
+            });
+            previousState.rules = rules;
+            updateState();
+        }
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.command) {
+                case 'loadRules':
+                    loadPersistedRules(message.data);
+                    break;
+            }
+        });
     </script>
 </body>
 </html>`;
@@ -107,10 +125,14 @@ const openSettings: OpenSettings = (context) => {
 
     panel.webview.html = getHtml();
 
+    // Retrieve persisted rules and send them to the webview
+    const persistedRules = context.globalState.get('redactionRules', []);
+    panel.webview.postMessage({ command: 'loadRules', data: persistedRules });
+
     function handleUpdateRules(rules: any) {
-        // Save the rules in a way that can be accessed by other parts of the extension
         context.globalState.update('redactionRules', rules);
     }
+
     panel.webview.onDidReceiveMessage(
         message => {
             switch (message.command) {
