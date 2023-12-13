@@ -47,7 +47,9 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
         });
     } catch (error) {
         // @ts-ignore
-        vscode.window.showErrorMessage(error.message || 'An error occurred while processing files.');
+        const errorMessage = error.message || 'An error occurred while processing files.';
+        vscode.window.showErrorMessage(errorMessage);
+        throw new Error(errorMessage);
     }
 }
 
