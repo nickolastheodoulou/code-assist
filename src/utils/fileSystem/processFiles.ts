@@ -40,14 +40,16 @@ async function processFiles(data: { files: string; ticketInfo: string; promptTyp
 
             if (!token.isCancellationRequested) {
                 const rootDir = path.dirname(path.join(vscode.workspace.rootPath || '', fileNames[0]));
-                const fileTree = generateFileTree(rootDir);
+                const fileTree = await generateFileTree(rootDir);
                 const output = getPropt(ticketInfo, codeInput, rootDir, fileTree, promptType, context);
                 webview.postMessage({ command: 'displayOutput', output });
             }
         });
     } catch (error) {
         // @ts-ignore
-        vscode.window.showErrorMessage(error.message || 'An error occurred while processing files.');
+        const errorMessage = error.message || 'An error occurred while processing files.';
+        vscode.window.showErrorMessage(errorMessage);
+        throw new Error(errorMessage);
     }
 }
 

@@ -1,22 +1,53 @@
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-function generateFileTree(dirPath: string, level: number = 0, maxDepth: number = 5): string {
-    if (level > maxDepth || !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) {
+const IGNORED_FILES = ['node_modules'];
+
+type FileTreeOptions = {
+    level?: number;
+    maxDepth?: number;
+}
+
+const existsAsync = async(filePath: string): Promise<boolean> => {
+    try {
+        await fs.promises.access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+const isDirectoryAsync = async(filePath: string): Promise<boolean> => {
+    try {
+        const stats = await fs.promises.stat(filePath);
+        return stats.isDirectory();
+    } catch {
+        return false;
+    }
+}
+
+async function generateFileTree(dirPath: string, options: FileTreeOptions = {}): Promise<string> {
+    const { level = 0, maxDepth = 5 } = options;
+
+    // Validate directory path
+    if (level > maxDepth || !await existsAsync(dirPath) || !await isDirectoryAsync(dirPath)) {
         return '';
     }
 
+    // Process directory
     let tree = '';
-    const files = fs.readdirSync(dirPath);
+    const files = await fs.promises.readdir(dirPath);
 
     for (const file of files) {
-        if (file === 'node_modules') {
+        if (IGNORED_FILES.includes(file)) {
             continue;
         }
+
         tree += ' '.repeat(level * 2) + file + '\n';
         const filePath = path.join(dirPath, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            tree += generateFileTree(filePath, level + 1, maxDepth);
+
+        if (await isDirectoryAsync(filePath)) {
+            tree += await generateFileTree(filePath, { level: level + 1, maxDepth });
         }
     }
 
