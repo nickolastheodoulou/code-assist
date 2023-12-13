@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.17
+    - Add unit tests
 - 1.0.16
     - Make Repo Public
     - Add community in README
