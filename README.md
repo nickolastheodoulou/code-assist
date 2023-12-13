@@ -166,15 +166,9 @@ We are dedicated to making Code Prompt Assist even better. Here's what's on the 
 
 - Refer to LICENSE.txt
 
-<!--
-
-
 ## Community and Support
 
-Join our vibrant community forum where you can share ideas, ask questions, and get help from both the developers and other users. Visit [Code Prompt Assist Forum](forum_link_here) to get involved. For direct support, reach out to us via [Support Email](support_email_here).
--->
-## Contact Information
+Join our vibrant community forum where you can share ideas, ask questions, and get help from both the developers and other users. Visit [Code Prompt Assist Forum](https://github.com/nickolastheodoulou/code-assist/discussions) to get involved. For direct support, feel free to reach out via [email](mailto:nickolastheodoulou@hotmail.com?subject=Code%20Prompt%20Assist%20Support). Please note that we aim to respond within 48 hours.
 
-For support or inquiries, please email us at <nickolastheodoulou@hotmail.com>.
 
 Enjoy coding with ease using Code Prompt Assist!

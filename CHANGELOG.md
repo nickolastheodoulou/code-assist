@@ -1,4 +1,7 @@
 ## Release Notes
+- 1.0.16
+    - Make Repo Public
+    - Add community in README
 - 1.0.15
     - Highlight redacted code in green
 - 1.0.14
