@@ -1,24 +1,12 @@
 import { generateFileTree } from "../generateFileTree";
-
 import * as fs from "fs";
-
-jest.mock("vscode", () => ({
-  window: {
-    withProgress: jest.fn((_, callback) =>
-      callback({ report: () => {} }, { isCancellationRequested: false })
-    ),
-    showInformationMessage: jest.fn(),
-    showErrorMessage: jest.fn(),
-  },
-}));
 
 jest.mock("fs", () => ({
   promises: {
-    readFile: jest.fn(),
-  },
-  existsSync: jest.fn(),
-  statSync: jest.fn(),
-  readdirSync: jest.fn(),
+    access: jest.fn(),
+    stat: jest.fn(),
+    readdir: jest.fn(),
+  }
 }));
 
 describe("generateFileTree", () => {
@@ -26,22 +14,23 @@ describe("generateFileTree", () => {
     jest.resetAllMocks();
   });
 
-  it("generates a file tree for a given directory", () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(true);
-    (fs.statSync as jest.Mock).mockImplementation((path) => ({
+  it("generates a file tree for a given directory", async () => {
+    // Mocking the asynchronous operations
+    (fs.promises.access as jest.Mock).mockResolvedValue(true);
+    (fs.promises.stat as jest.Mock).mockImplementation((path) => Promise.resolve({
       isDirectory: () => !path.includes(".txt"),
     }));
-    (fs.readdirSync as jest.Mock).mockReturnValue(["file1.txt", "folder1"]);
+    (fs.promises.readdir as jest.Mock).mockResolvedValue(["file1.txt", "folder1"]);
 
-    const tree = generateFileTree("/test/path");
+    const tree = await generateFileTree("/test/path");
     expect(tree).toMatch("file1.txt");
     expect(tree).toMatch("folder1");
   });
 
-  it("returns an empty string if the directory does not exist", () => {
-    (fs.existsSync as jest.Mock).mockReturnValue(false);
+  it("returns an empty string if the directory does not exist", async () => {
+    (fs.promises.access as jest.Mock).mockRejectedValue(new Error("Not Found"));
 
-    const tree = generateFileTree("/non/existent/path");
+    const tree = await generateFileTree("/non/existent/path");
     expect(tree).toBe("");
   });
 });
