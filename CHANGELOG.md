@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.19
+    - Add integration tests
 - 1.0.18
     - Add unit tests
 - 1.0.17
