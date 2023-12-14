@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.json", // Adjust the path as per your directory structure
+    "compilerOptions": {
+      "outDir": "../../out/mocha", // Output directory for compiled Mocha tests
+      "types": ["mocha", "node"] // Specify Mocha and Node types only
+    },
+    "include": [
+      "**/*" // Include all files in the Mocha test directory
+    ],
+    "exclude": [
+      "node_modules",
+      "**/*.spec.ts" // Exclude Jest test files if they have a different naming convention like .spec.ts
+    ]
+  }
+  
