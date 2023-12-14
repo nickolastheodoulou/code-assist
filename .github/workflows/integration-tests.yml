@@ -23,6 +23,10 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-
+    - name: Set up Xvfb
+      run: |
+        sudo apt-get install -y xvfb
+        Xvfb :99 -ac &
+        export DISPLAY=:99
     - name: Run integration tests
       run: npm run test:integration
