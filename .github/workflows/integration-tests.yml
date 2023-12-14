@@ -1,0 +1,32 @@
+name: Run Integration Tests
+
+on:
+  push:
+    branches-ignore:
+      - 'main'
+  pull_request:
+    branches-ignore:
+      - 'main'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '21'
+
+    - name: Install dependencies
+      run: npm install
+    - name: Set up Xvfb
+      run: |
+        sudo apt-get install -y xvfb
+        Xvfb :99 -ac &
+        export DISPLAY=:99
+    - name: Run integration tests
+      run: xvfb-run -a npm run test:integration
