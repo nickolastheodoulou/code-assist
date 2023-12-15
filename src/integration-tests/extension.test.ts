@@ -47,7 +47,7 @@ function createMockExtensionContext(): vscode.ExtensionContext {
 suite("Extension Test Suite", () => {
   vscode.window.showInformationMessage("Start all tests.");
 
-  test("Extension Activation", async () => {
+    test("Extension Activation", async () => {
     const mockContext = createMockExtensionContext();
     await activate(mockContext);
     const commands = await vscode.commands.getCommands(true);

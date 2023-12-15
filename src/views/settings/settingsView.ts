@@ -20,14 +20,53 @@ const getHtml = (): string => {
             cursor: pointer;
             color: red;
         }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black; /* If you need a dotted underline */
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: black;
+            color: #fff;
+            border-radius: 6px;
+            padding: 5px;
+            margin: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px; /* Use half of the width (120px/2 = 60px) */
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Redaction Rules Settings</h1>
         <div>
-            <input type="text" id="originalText" placeholder="Original Text">
-            <input type="text" id="replacementText" placeholder="Replacement Text">
+        <div class="input-container">
+        <label for="originalText">Original Text: 
+            <span class="tooltip">?
+            <span class="tooltiptext">Text to redact from the generated prompt.</span>
+            </span>
+            </label>
+        <input type="text" id="originalText" name="originalText">
+        </div>
+        
+        <div class="input-container">
+            <label for="replacementText">Replacement Text: 
+                <span class="tooltip">?
+                <span class="tooltiptext">Replacement for the original text. Defaults to <strong>redactedN</strong> if left blank.</span>
+                </span>
+            </label>
+            <input type="text" id="replacementText" name="replacementText">
+        </div>
             <button id="addRule">Add Rule</button>
         </div>
         <ul id="rulesList">
