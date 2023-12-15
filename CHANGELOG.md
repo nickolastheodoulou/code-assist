@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.1.1
+    - Fix HTML bug
 - 1.1.0
     - Revamp styling
 - 1.0.20
