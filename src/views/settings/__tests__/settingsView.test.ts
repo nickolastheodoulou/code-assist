@@ -29,6 +29,15 @@ describe("settingsView", () => {
       expect(html).toContain('id="rulesList"');
       // More assertions can be added here
     });
+
+    it("includes correct tooltips for original and replacement text inputs", () => {
+      const html = getHtml();
+      const originalTextTooltip = "Text to redact from the generated prompt.";
+      const replacementTextTooltip = "Replacement for the original text. Defaults to <strong>redactedN</strong> if left blank.";
+
+      expect(html).toContain(originalTextTooltip);
+      expect(html).toContain(replacementTextTooltip);
+  });
   });
 
   describe("openSettings", () => {

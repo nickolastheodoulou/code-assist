@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.0.20
+    - Improve help for settings page
 - 1.0.19
     - Add integration tests
 - 1.0.18
