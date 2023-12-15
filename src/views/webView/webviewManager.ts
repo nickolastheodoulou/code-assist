@@ -223,7 +223,7 @@ const getFormHtml = (promptType: string): string => {
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
-                    document.getElementById('output').innerHTML = event.data.output;
+                    document.getElementById('output').textContent = event.data.output;
                     saveState();
                     break;
             }

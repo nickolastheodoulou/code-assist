@@ -16,8 +16,7 @@ function applyRedactionRules(text: string, context: vscode.ExtensionContext): st
       const originalPattern = new RegExp(rule.original, "gi"); // "i" flag for case-insensitivity
       const replacement = rule.replacement || `redacted`;
 
-      // Apply the CSS class to the redacted text without HTML encoding
-      redactedText = redactedText.replace(originalPattern, `<span class="redacted">${replacement}</span>`);
+      redactedText = redactedText.replace(originalPattern, replacement);
   });
 
   return redactedText;
