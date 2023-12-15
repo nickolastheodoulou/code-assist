@@ -8,9 +8,28 @@ const getHtml = (): string => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redaction Rules</title>
     <style>
-        /* Add your CSS styles here */
-        .container {
+        body {
+            font-family: Arial, sans-serif;
             margin: 20px;
+            color: #C0C0CD; /* Default text color */
+            background-color: #343541; /* Light mode background */
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                color: #fff; /* White text for dark mode */
+                background-color: #343541; /* Dark mode background */
+            }
+        }
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                color: #fff; /* White text for dark mode */
+                background-color: #343541; /* Dark mode background */
+            }
+            .tooltip .tooltiptext {
+                background-color: #555; /* Darker background for tooltip */
+            }
         }
         .rule {
             margin-bottom: 10px;
@@ -25,7 +44,81 @@ const getHtml = (): string => {
             display: inline-block;
             border-bottom: 1px dotted black; /* If you need a dotted underline */
         }
+
+        input {
+            background-color: #343541;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
         
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f5f5f5; /* Light mode */
+        }
+        
+        input[type="text"]:focus {
+            border-color: #0078D4;
+            outline: none;
+            background-color: #005a9e;
+        }
+        
+        button#addRule {
+            padding: 10px 15px;
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button#addRule:hover {
+            background-color: #005a9e;
+        }
+        
+        ul#rulesList {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        ul#rulesList li {
+            background-color: #f9f9f9; /* Light mode */
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+        
+        
+        .deleteButton {
+            float: right;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .deleteButton:hover {
+            background-color: #ff3333;
+        }
+        
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            input[type="text"], 
+            ul#rulesList li {
+                background-color: #2c2c2c; /* Dark mode background */
+                color: #fff;
+                border-color: #444;
+            }
+        }
+
         .tooltip .tooltiptext {
             visibility: hidden;
             width: 220px;
@@ -38,7 +131,9 @@ const getHtml = (): string => {
             z-index: 1;
             bottom: 100%;
             left: 50%;
-            margin-left: -60px; /* Use half of the width (120px/2 = 60px) */
+            left: 0%;
+            margin-left: 0
+            transform: translateX(-100%);
         }
         
         .tooltip:hover .tooltiptext {
@@ -47,7 +142,6 @@ const getHtml = (): string => {
     </style>
 </head>
 <body>
-    <div class="container">
         <h1>Redaction Rules Settings</h1>
         <div>
         <div class="input-container">
@@ -56,7 +150,7 @@ const getHtml = (): string => {
             <span class="tooltiptext">Text to redact from the generated prompt.</span>
             </span>
             </label>
-        <input type="text" id="originalText" name="originalText">
+        <input type="text" id="originalText" name="originalText" placeholder="e.g. google.com">
         </div>
         
         <div class="input-container">
@@ -65,14 +159,13 @@ const getHtml = (): string => {
                 <span class="tooltiptext">Replacement for the original text. Defaults to <strong>redactedN</strong> if left blank.</span>
                 </span>
             </label>
-            <input type="text" id="replacementText" name="replacementText">
+            <input type="text" id="replacementText" name="replacementText" placeholder="e.g. searchEngine.com">
         </div>
             <button id="addRule">Add Rule</button>
         </div>
         <ul id="rulesList">
             <!-- Rules will be listed here -->
         </ul>
-    </div>
 
     <script>
     const vscode = acquireVsCodeApi();

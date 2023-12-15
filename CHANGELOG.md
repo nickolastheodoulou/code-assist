@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.1.0
+    - Revamp styling
 - 1.0.20
     - Improve help for settings page
 - 1.0.19

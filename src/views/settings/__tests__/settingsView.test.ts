@@ -25,7 +25,6 @@ describe("settingsView", () => {
     it("returns valid HTML structure", () => {
       const html = getHtml();
       expect(html).toContain("DOCTYPE html");
-      expect(html).toContain('class="container"');
       expect(html).toContain('id="rulesList"');
       // More assertions can be added here
     });
