@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
 import { PromptType } from "../../__types__/types";
 import { processFiles } from "../../utils/fileSystem/processFiles";
+import { applyRedactionRules } from "../../utils/prompt/getPropt";
 
 const getFormHtml = (promptType: string): string => {
   return `<!DOCTYPE html>
@@ -220,11 +221,29 @@ const getFormHtml = (promptType: string): string => {
             });
         }
 
+        function applyRedactedClass({ redactedText, redactedStrings }) {
+            console.log('redactedText in applyRedactedClass', redactedText);
+            console.log('redactedStrings in applyRedactedClass', redactedStrings);
+            // let outputElement = document.getElementById('output');
+            // redactedRules.forEach(rule => {
+            //     let regex = new RegExp(escapeRegExp(rule.replacement), 'gi');
+            //     outputElement.innerHTML = outputElement.innerHTML.replace(regex, \`<span class="redacted">\${rule.replacement}</span>\`);
+            // });
+        }
+        
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
+        }
+
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
-                    document.getElementById('output').textContent = event.data.output;
+                    document.getElementById('output').textContent = event.data.redactedText;
                     saveState();
+                    break;
+                case 'redactedRules':
+                    const { redactedStrings, redactedText} = event.data
+                    applyRedactedClass({ redactedStrings, redactedText});
                     break;
             }
         });
@@ -279,6 +298,14 @@ const openForm: OpenForm = (promptType, context) => {
   );
 
   panel.webview.html = getFormHtml(promptType);
+
+  const { redactedText, redactedStrings } = applyRedactionRules(promptType, context);
+  console.log('redactedText in openForm', redactedText);
+console.log('redactedStrings in openForm', redactedStrings);
+  panel.webview.postMessage({ 
+    command: 'redactedRules', 
+    data: { redactedText, redactedStrings } 
+  });
 
   panel.webview.onDidReceiveMessage(
     (message) => {
