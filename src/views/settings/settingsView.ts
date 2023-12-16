@@ -270,6 +270,9 @@ const openSettings: OpenSettings = (context) => {
         { enableScripts: true }
     );
 
+    console.log("WebviewPanel created", panel);
+
+
     panel.webview.html = getHtml();
 
     // Retrieve persisted rules and send them to the webview
