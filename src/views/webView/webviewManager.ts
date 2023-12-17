@@ -221,29 +221,26 @@ const getFormHtml = (promptType: string): string => {
             });
         }
 
-        function applyRedactedClass({ redactedText, redactedStrings }) {
-            console.log('redactedText in applyRedactedClass', redactedText);
-            console.log('redactedStrings in applyRedactedClass', redactedStrings);
-            // let outputElement = document.getElementById('output');
-            // redactedRules.forEach(rule => {
-            //     let regex = new RegExp(escapeRegExp(rule.replacement), 'gi');
-            //     outputElement.innerHTML = outputElement.innerHTML.replace(regex, \`<span class="redacted">\${rule.replacement}</span>\`);
-            // });
-        }
-        
         function escapeRegExp(string) {
             return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
+        }
+
+        function applyRedactedClass(redactedText, redactedStrings) {
+            const updatedText = redactedStrings.reduce((acc, redactedString) => {
+                const regex = new RegExp(escapeRegExp(redactedString), 'gi');
+                return acc.replace(regex, \`<span class="redacted">\${redactedString}</span>\`);
+            }, redactedText);
+            
+            return updatedText;
         }
 
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
-                    document.getElementById('output').textContent = event.data.redactedText;
+                    const { redactedText, redactedStrings } = event.data;
+                    const updatedText = applyRedactedClass(redactedText, redactedStrings);
+                    document.getElementById('output').innerHTML = updatedText;
                     saveState();
-                    break;
-                case 'redactedRules':
-                    const { redactedStrings, redactedText} = event.data
-                    applyRedactedClass({ redactedStrings, redactedText});
                     break;
             }
         });
@@ -301,7 +298,7 @@ const openForm: OpenForm = (promptType, context) => {
 
   const { redactedText, redactedStrings } = applyRedactionRules(promptType, context);
   console.log('redactedText in openForm', redactedText);
-console.log('redactedStrings in openForm', redactedStrings);
+    console.log('redactedStrings in openForm', redactedStrings);
   panel.webview.postMessage({ 
     command: 'redactedRules', 
     data: { redactedText, redactedStrings } 
