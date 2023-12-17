@@ -224,22 +224,45 @@ const getFormHtml = (promptType: string): string => {
         function escapeRegExp(string) {
             return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
         }
-
+        
         function applyRedactedClass(redactedText, redactedStrings) {
-            const updatedText = redactedStrings.reduce((acc, redactedString) => {
+             const outputElement = document.getElementById('output');
+            outputElement.textContent = redactedText;
+        
+            redactedStrings.forEach(redactedString => {
                 const regex = new RegExp(escapeRegExp(redactedString), 'gi');
-                return acc.replace(regex, \`<span class="redacted">\${redactedString}</span>\`);
-            }, redactedText);
-            
-            return updatedText;
+                highlightText(outputElement, regex);
+            });
         }
-
+        
+        function highlightText(parentNode, regex) {
+            const walker = document.createTreeWalker(parentNode, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            
+            while (node = walker.nextNode()) {
+                let match;
+                while ((match = regex.exec(node.nodeValue)) !== null) {
+                    const span = document.createElement('span');
+                    span.className = 'redacted';
+                    span.textContent = match[0];
+                    
+                    const range = document.createRange();
+                    range.setStart(node, match.index);
+                    range.setEnd(node, match.index + match[0].length);
+                    range.deleteContents();
+                    range.insertNode(span);
+        
+                    // Update the walker's current node to the next sibling of the span, to avoid infinite loop
+                    walker.currentNode = span.nextSibling;
+                }
+            }
+        }
+        
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
                     const { redactedText, redactedStrings } = event.data;
-                    const updatedText = applyRedactedClass(redactedText, redactedStrings);
-                    document.getElementById('output').innerHTML = updatedText;
+                    applyRedactedClass(redactedText, redactedStrings);
                     saveState();
                     break;
             }
