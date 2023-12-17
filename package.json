@@ -3,7 +3,7 @@
   "publisher": "NickolasTheodoulou",
   "displayName": "Code Prompt Assist",
   "description": "Welcome to Code Prompt Assist, the indispensable Visual Studio Code extension that revolutionizes your coding workflow while prioritizing data privacy.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "engines": {
     "vscode": "^1.0.0"
   },

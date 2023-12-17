@@ -80,7 +80,7 @@ const getPropt: GetPrompt = (
   
   ${promptMessage}
   
-  Ideally I'd want to get to a point that I can raise an MR with the suggestions prodived
+  Ideally I'd want to get to a point that I can raise an MR with the suggestions provided
   `;
 
   return applyRedactionRules(nonRedactedPrompt, context);
