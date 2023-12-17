@@ -1,4 +1,6 @@
 ## Release Notes
+- 1.1.2
+    - Add back in highlight in output for redacted text
 - 1.1.1
     - Fix HTML bug
 - 1.1.0

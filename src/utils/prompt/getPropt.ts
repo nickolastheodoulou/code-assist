@@ -1,26 +1,35 @@
 import * as vscode from "vscode";
 
-import { GetPrompt, PromptType } from "../../__types__/types";
+import {
+  ApplyRedactionRules,
+  GetPrompt,
+  PromptType,
+  RedactedStrings,
+  RedactionRules,
+} from "../../__types__/types";
 
-type RedactionRules = {
-  original: string,
-  replacement: string
-}[];
-
-function applyRedactionRules(text: string, context: vscode.ExtensionContext): string {
-  const redactionRules: RedactionRules = context.globalState.get("redactionRules", []);
+const applyRedactionRules:ApplyRedactionRules = (
+  text,
+  context
+) => {
+  const redactionRules: RedactionRules = context.globalState.get(
+    "redactionRules",
+    []
+  ) || [];
 
   let redactedText = text;
+  const redactedStrings: RedactedStrings = [];
 
   redactionRules.forEach((rule) => {
-      const originalPattern = new RegExp(rule.original, "gi"); // "i" flag for case-insensitivity
-      const replacement = rule.replacement || `redacted`;
+    const originalPattern = new RegExp(rule.original, "gi");
+    const replacement = rule.replacement || `redacted`;
 
-      redactedText = redactedText.replace(originalPattern, replacement);
+    redactedStrings.push(replacement);
+    redactedText = redactedText.replace(originalPattern, replacement);
   });
 
-  return redactedText;
-}
+  return { redactedText, redactedStrings };
+};
 
 /*
 TODO consider adding
@@ -71,7 +80,7 @@ const getPropt: GetPrompt = (
   
   ${promptMessage}
   
-  Ideally I'd want to get to a point that I can raise an MR with the suggestions prodived
+  Ideally I'd want to get to a point that I can raise an MR with the suggestions provided
   `;
 
   return applyRedactionRules(nonRedactedPrompt, context);

@@ -33,7 +33,10 @@ describe('getFormHtml', () => {
 
         expect(html).toContain('Test Title');
         expect(html).toContain('<title>Form</title>');
-        // Further assertions to verify the HTML structure can be added here
+        expect(html).toMatch(/<input[^>]+id="files"/); // Checks if input for files exists
+        expect(html).toMatch(/<textarea[^>]+id="ticket-info"/); // Checks if textarea for ticket-info exists
+        expect(html).toMatch(/<button[^>]+id="copyButton"/); // Checks if the copy button exists
+        expect(html).toMatch(/<div[^>]+id="output"/); // Checks if the output div exists
     });
 });
 
@@ -61,6 +64,28 @@ describe('openForm', () => {
             { enableScripts: true }
         );
         expect(mockPanel.webview.onDidReceiveMessage).toHaveBeenCalled();
+    });
+
+    it('handles messages correctly', () => {
+        const mockPanel = {
+            webview: {
+                html: '',
+                onDidReceiveMessage: jest.fn().mockImplementation((handler) => {
+                    // Simulate a message being posted to the webview
+                    handler({ command: 'displayOutput', data: { redactedText: 'example', redactedStrings: ['test'] } });
+                    // Add more simulations as needed
+                }),
+            },
+            // ... other mock properties ...
+        };
+        (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
+
+        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
+
+        // Test if the message handler was invoked
+        expect(mockPanel.webview.onDidReceiveMessage).toHaveBeenCalled();
+
+        // Further assertions to check if the message was handled as expected
     });
 
 });

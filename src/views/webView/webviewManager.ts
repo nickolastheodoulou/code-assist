@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
 import { PromptType } from "../../__types__/types";
 import { processFiles } from "../../utils/fileSystem/processFiles";
+import { applyRedactionRules } from "../../utils/prompt/getPropt";
 
 const getFormHtml = (promptType: string): string => {
   return `<!DOCTYPE html>
@@ -220,10 +221,36 @@ const getFormHtml = (promptType: string): string => {
             });
         }
 
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
+        }
+        
+        function sanitizeHTML(text) {
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = text;
+            return tempDiv.innerHTML;
+        }
+        
+        function applyRedactedClass(redactedText, redactedStrings) {
+            const outputElement = document.getElementById('output');
+            
+            // Sanitize the redactedText to escape any HTML
+            let sanitizedText = sanitizeHTML(redactedText);
+        
+            redactedStrings.forEach(redactedString => {
+                const escapedString = escapeRegExp(redactedString);
+                const regex = new RegExp(escapedString, 'gi');
+                sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
+            });
+        
+            outputElement.innerHTML = sanitizedText;
+        }        
+        
         window.addEventListener('message', event => {
             switch (event.data.command) {
                 case 'displayOutput':
-                    document.getElementById('output').textContent = event.data.output;
+                    const { redactedText, redactedStrings } = event.data;
+                    applyRedactedClass(redactedText, redactedStrings);
                     saveState();
                     break;
             }
