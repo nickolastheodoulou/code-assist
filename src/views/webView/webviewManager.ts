@@ -225,38 +225,26 @@ const getFormHtml = (promptType: string): string => {
             return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
         }
         
+        function sanitizeHTML(text) {
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = text;
+            return tempDiv.innerHTML;
+        }
+        
         function applyRedactedClass(redactedText, redactedStrings) {
-             const outputElement = document.getElementById('output');
-            outputElement.textContent = redactedText;
+            const outputElement = document.getElementById('output');
+            
+            // Sanitize the redactedText to escape any HTML
+            let sanitizedText = sanitizeHTML(redactedText);
         
             redactedStrings.forEach(redactedString => {
-                const regex = new RegExp(escapeRegExp(redactedString), 'gi');
-                highlightText(outputElement, regex);
+                const escapedString = escapeRegExp(redactedString);
+                const regex = new RegExp(escapedString, 'gi');
+                sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
             });
-        }
         
-        function highlightText(parentNode, regex) {
-            const walker = document.createTreeWalker(parentNode, NodeFilter.SHOW_TEXT, null, false);
-            let node;
-            
-            while (node = walker.nextNode()) {
-                let match;
-                while ((match = regex.exec(node.nodeValue)) !== null) {
-                    const span = document.createElement('span');
-                    span.className = 'redacted';
-                    span.textContent = match[0];
-                    
-                    const range = document.createRange();
-                    range.setStart(node, match.index);
-                    range.setEnd(node, match.index + match[0].length);
-                    range.deleteContents();
-                    range.insertNode(span);
-        
-                    // Update the walker's current node to the next sibling of the span, to avoid infinite loop
-                    walker.currentNode = span.nextSibling;
-                }
-            }
-        }
+            outputElement.innerHTML = sanitizedText;
+        }        
         
         window.addEventListener('message', event => {
             switch (event.data.command) {
@@ -318,14 +306,6 @@ const openForm: OpenForm = (promptType, context) => {
   );
 
   panel.webview.html = getFormHtml(promptType);
-
-  const { redactedText, redactedStrings } = applyRedactionRules(promptType, context);
-  console.log('redactedText in openForm', redactedText);
-    console.log('redactedStrings in openForm', redactedStrings);
-  panel.webview.postMessage({ 
-    command: 'redactedRules', 
-    data: { redactedText, redactedStrings } 
-  });
 
   panel.webview.onDidReceiveMessage(
     (message) => {

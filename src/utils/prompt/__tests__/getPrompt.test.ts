@@ -35,12 +35,12 @@ describe("getPropt", () => {
       PromptType.CODE_SOLUTION,
       mockExtensionContext
     );
-    expect(result).toContain(
+    expect(result.redactedText).toContain(
       "Can you offer a code solution to meet these requirements?"
     );
-    expect(result).toContain(ticketInfo);
-    expect(result).toContain(JSON.stringify(codeInput));
-    expect(result).toContain(fileTree);
+    expect(result.redactedText).toContain(ticketInfo);
+    expect(result.redactedText).toContain(JSON.stringify(codeInput));
+    expect(result.redactedText).toContain(fileTree);
   });
 
   it("returns prompt for CODE_OPTIMIZATIONS", () => {
@@ -52,12 +52,13 @@ describe("getPropt", () => {
       PromptType.CODE_OPTIMIZATIONS,
       mockExtensionContext
     );
-    expect(result).toContain(
+    expect(result.redactedStrings).toEqual([]);
+    expect(result.redactedText).toContain(
       "Can you offer code optimizations that meet best practises to meet these requirements?"
     );
-    expect(result).toContain(ticketInfo);
-    expect(result).toContain(JSON.stringify(codeInput));
-    expect(result).toContain(fileTree);
+    expect(result.redactedText).toContain(ticketInfo);
+    expect(result.redactedText).toContain(JSON.stringify(codeInput));
+    expect(result.redactedText).toContain(fileTree);
   });
 
   it("returns prompt for UNIT_TESTS", () => {
@@ -69,12 +70,13 @@ describe("getPropt", () => {
       PromptType.UNIT_TESTS,
       mockExtensionContext
     );
-    expect(result).toContain(
+    expect(result.redactedStrings).toEqual([]);
+    expect(result.redactedText).toContain(
       "Can you write me some unit tests to meet these requirements?"
     );
-    expect(result).toContain(ticketInfo);
-    expect(result).toContain(JSON.stringify(codeInput));
-    expect(result).toContain(fileTree);
+    expect(result.redactedText).toContain(ticketInfo);
+    expect(result.redactedText).toContain(JSON.stringify(codeInput));
+    expect(result.redactedText).toContain(fileTree);
   });
 
   it("returns a default prompt when prompt type is not recognized", () => {
@@ -86,11 +88,12 @@ describe("getPropt", () => {
       "UNKNOWN" as PromptType,
       mockExtensionContext
     );
-    expect(result).toContain(ticketInfo);
-    expect(result).toContain(JSON.stringify(codeInput));
-    expect(result).toContain(fileTree);
-    expect(result).not.toContain("Can you offer");
-    expect(result).not.toContain("Can you write me");
+    expect(result.redactedStrings).toEqual([]);
+    expect(result.redactedText).toContain(ticketInfo);
+    expect(result.redactedText).toContain(JSON.stringify(codeInput));
+    expect(result.redactedText).toContain(fileTree);
+    expect(result.redactedText).not.toContain("Can you offer");
+    expect(result.redactedText).not.toContain("Can you write me");
   });
 });
 
@@ -110,7 +113,7 @@ describe("applyRedactionRules", () => {
       "This is a Secret and here is a PassWord",
       mockExtensionContext
     );
-    expect(result).toBe("This is a classified and here is a passcode");
+    expect(result).toEqual({"redactedStrings": ["classified", "passcode"], "redactedText": "This is a classified and here is a passcode"});
   });
 
   test("uses redactedN for strings without a specified replacement", () => {
@@ -123,6 +126,6 @@ describe("applyRedactionRules", () => {
       "UserNAME and EmAiL are redacted",
       mockExtensionContext
     );
-    expect(result).toBe("redacted and redacted are redacted");
+    expect(result).toEqual({"redactedStrings": ["redacted", "redacted"], "redactedText": "redacted and redacted are redacted"});
   });
 });

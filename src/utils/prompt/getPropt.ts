@@ -15,7 +15,7 @@ const applyRedactionRules:ApplyRedactionRules = (
   const redactionRules: RedactionRules = context.globalState.get(
     "redactionRules",
     []
-  );
+  ) || [];
 
   let redactedText = text;
   const redactedStrings: RedactedStrings = [];
