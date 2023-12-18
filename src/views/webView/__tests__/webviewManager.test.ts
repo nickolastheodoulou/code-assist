@@ -29,7 +29,7 @@ const mockExtensionContext = {
 describe('getFormHtml', () => {
     it('returns the correct HTML for a given prompt type', () => {
         (getTitleFromPromptType as jest.Mock).mockReturnValue('Test Title');
-        const html = getFormHtml('codeSolution');
+        const html = getFormHtml();
 
         expect(html).toContain('Test Title');
         expect(html).toContain('<title>Form</title>');
@@ -55,7 +55,7 @@ describe('openForm', () => {
         };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
-        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
+        openForm(mockExtensionContext);
 
         expect(vscode.window.createWebviewPanel).toHaveBeenCalledWith(
             'formView',
@@ -80,7 +80,7 @@ describe('openForm', () => {
         };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
-        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
+        openForm(mockExtensionContext);
 
         // Test if the message handler was invoked
         expect(mockPanel.webview.onDidReceiveMessage).toHaveBeenCalled();

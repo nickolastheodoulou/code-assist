@@ -1,10 +1,18 @@
 import * as vscode from "vscode";
-import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
-import { PromptType } from "../../__types__/types";
 import { processFiles } from "../../utils/fileSystem/processFiles";
-import { applyRedactionRules } from "../../utils/prompt/getPropt";
+import TITLE from "../../utils/constants/title";
 
-const getFormHtml = (promptType: string): string => {
+
+const getFormHtml = (): string => {
+
+    const promptTypeDropdown = `
+        <label for="promptType">Select Prompt Type:</label>
+        <select id="promptType" name="promptType">
+            <option value="codeOptimizations">Code Optimizations</option>
+            <option value="unitTests">Unit Tests</option>
+            <option value="codeSolution">Code Solution</option>
+        </select>
+    `;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -148,7 +156,7 @@ const getFormHtml = (promptType: string): string => {
     </style>
 </head>
 <body>
-    <h1>${getTitleFromPromptType(promptType)}</h1>
+    <h1>${TITLE}</h1>
     <div id="error-message"></div>
     <form id="myForm">
         <label for="files">Relative File Paths:
@@ -161,6 +169,7 @@ const getFormHtml = (promptType: string): string => {
         <label for="ticket-info">Ticket Info:</label>
         <textarea id="ticket-info" name="Ticket Info" placeholder="Describe your ticket information here..." rows="4"></textarea>
 
+        ${promptTypeDropdown}
         <input type="button" id="Submit" value="Submit" onclick="submitForm()">
     </form>
     <div id="outputContainer">
@@ -192,12 +201,15 @@ const getFormHtml = (promptType: string): string => {
             errorElement.style.display = message ? 'block' : 'none';
         }
 
-        function validateInput(files, ticketInfo) {
+        function validateInput(files, ticketInfo, promptType) {
             if (!files.trim()) {
                 return 'Please enter file paths.';
             }
             if (!ticketInfo.trim()) {
                 return 'Please enter ticket information.';
+            }
+            if (!promptType.trim()) {
+                return 'Please select a prompt type.';
             }
             return '';
         }
@@ -205,8 +217,9 @@ const getFormHtml = (promptType: string): string => {
         function submitForm() {
             const files = document.getElementById('files').value;
             const ticketInfo = document.getElementById('ticket-info').value;
+            const promptType = document.getElementById('promptType').value;
           
-            const errorMessage = validateInput(files, ticketInfo);
+            const errorMessage = validateInput(files, ticketInfo, promptType);
             if (errorMessage) {
                 displayError(errorMessage);
                 return;
@@ -217,7 +230,7 @@ const getFormHtml = (promptType: string): string => {
 
             vscode.postMessage({
                 command: 'submit',
-                data: { files, ticketInfo }
+                data: { files, ticketInfo, promptType }
             });
         }
 
@@ -293,23 +306,24 @@ const getFormHtml = (promptType: string): string => {
 };
 
 type OpenForm = (
-  promptType: PromptType,
   context: vscode.ExtensionContext
 ) => void;
 
-const openForm: OpenForm = (promptType, context) => {
+const openForm: OpenForm = (context) => {
   const panel = vscode.window.createWebviewPanel(
     "formView",
-    getTitleFromPromptType(promptType),
+    TITLE,
     vscode.ViewColumn.One,
     { enableScripts: true }
   );
 
-  panel.webview.html = getFormHtml(promptType);
+  panel.webview.html = getFormHtml();
 
   panel.webview.onDidReceiveMessage(
     (message) => {
       if (message.command === "submit") {
+        console.log('message.data', message.data);
+        const promptType = message.data.promptType;
         processFiles({ ...message.data, promptType }, panel.webview, context);
       }
     },

@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import TITLE from "../../utils/constants/title";
 
 export class CodeAssistTreeItem extends vscode.TreeItem {
   constructor(
@@ -30,24 +31,14 @@ class CodeAssistTreeProvider
     } else {
       // Root items
       return Promise.resolve([
-        createTreeItem("0. Configure Redaction Settings", {
+        createTreeItem("Configure Redaction Settings", {
           command: "code-prompt-assist.openSettings",
           title: "Create Redaction Rules",
         }),
-        createTreeItem("1. Generate Code Solution", {
+        createTreeItem(TITLE, {
           command: "code-prompt-assist.openForm",
           title: "Open Form",
-          arguments: ["codeSolution"],
-        }),
-        createTreeItem("2. Generate Unit Tests", {
-          command: "code-prompt-assist.openForm",
-          title: "Open Form",
-          arguments: ["unitTests"],
-        }),
-        createTreeItem("3. Generate Code Optimizations", {
-          command: "code-prompt-assist.openForm",
-          title: "Open Form",
-          arguments: ["codeOptimizations"],
+          arguments: [],
         }),
       ]);
     }
