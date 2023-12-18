@@ -46,6 +46,7 @@ describe('openForm', () => {
         getMock.mockReturnValueOnce([]);
       });
       const mockPanel = {
+        onDidChangeViewState: jest.fn(),
         webview: {
             html: '',
             postMessage: jest.fn(),
