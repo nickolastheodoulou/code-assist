@@ -109,6 +109,32 @@ const getFormHtml = (): string => {
         textarea#ticket-info {
             margin-bottom: 15px;
         }
+
+        select#promptType {
+        width: 100%; /* Full-width */
+        padding: 10px; /* Comfortable padding */
+        margin-top: 10px; /* Consistent margin */
+        margin-bottom: 10px;
+        background-color: #f5f5f5; /* Light mode background */
+        border: 1px solid #ccc; /* Subtle border */
+        border-radius: 4px; /* Rounded corners */
+        color: #333; /* Text color */
+        box-sizing: border-box; /* Box sizing */
+        transition: border-color 0.3s; /* Smooth transition for border */
+}
+
+select#promptType:focus {
+    border-color: #0078D4; /* Highlight color when focused */
+    outline: none; /* Removing default focus outline */
+    background-color: #eef4fb; /* Slightly different background on focus */
+}
+
+/* Styling for the options inside the dropdown */
+select#promptType option {
+    padding: 8px; /* Padding for options */
+    background-color: white; /* Background for options */
+    color: black; /* Text color for options */
+}
         
         #outputContainer {
             position: relative;
