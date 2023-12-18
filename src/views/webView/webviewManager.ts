@@ -7,9 +7,9 @@ const getFormHtml = (): string => {
     const promptTypeDropdown = `
         <label for="promptType">Select Prompt Type:</label>
         <select id="promptType" name="promptType">
-            <option value="codeOptimizations">Code Optimizations</option>
-            <option value="unitTests">Unit Tests</option>
             <option value="codeSolution">Code Solution</option>
+            <option value="unitTests">Unit Tests</option>
+            <option value="codeOptimizations">Code Optimizations</option>
         </select>
     `;
 
@@ -207,19 +207,17 @@ select#promptType option {
     </div>
     <script>
         const vscode = acquireVsCodeApi();
-        
-        const previousState = vscode.getState();
-        if (previousState) {
-            document.getElementById('files').value = previousState.files || '';
-            document.getElementById('ticket-info').value = previousState.ticketInfo || '';
-            document.getElementById('output').textContent = previousState.output || '';
-        }
 
         function saveState() {
             const files = document.getElementById('files').value;
             const ticketInfo = document.getElementById('ticket-info').value;
-            const output = document.getElementById('output').textContent;
-            vscode.setState({ files, ticketInfo, output });
+            const promptType = document.getElementById('promptType').value;
+            vscode.setState({ files, ticketInfo, promptType });
+            // Send state to VS Code for global persistence
+            vscode.postMessage({
+                command: 'saveState',
+                data: { files, ticketInfo, promptType }
+            });
         }
 
         function displayError(message) {
@@ -303,6 +301,12 @@ select#promptType option {
                     applyRedactedClass(redactedText, redactedStrings);
                     saveState();
                     break;
+                case 'restoreState':
+                    const { files, ticketInfo, promptType } = event.data.data;
+                    document.getElementById('files').value = files || '';
+                    document.getElementById('ticket-info').value = ticketInfo || '';
+                    document.getElementById('promptType').value = promptType || 'codeSolution';
+                    break;
             }
         });
 
@@ -347,25 +351,32 @@ type OpenForm = (
 ) => void;
 
 const openForm: OpenForm = (context) => {
-  const panel = vscode.window.createWebviewPanel(
-    "formView",
-    TITLE,
-    vscode.ViewColumn.One,
-    { enableScripts: true }
-  );
-
-  panel.webview.html = getFormHtml();
-
-  panel.webview.onDidReceiveMessage(
-    (message) => {
-      if (message.command === "submit") {
-        processFiles({ ...message.data }, panel.webview, context);
-      }
-    },
-    undefined,
-    context.subscriptions
-  );
-  return panel;
-};
+    const panel = vscode.window.createWebviewPanel(
+      "formView",
+      TITLE,
+      vscode.ViewColumn.One,
+      { enableScripts: true }
+    );
+  
+    panel.webview.html = getFormHtml();
+  
+    // Restore state
+    const persistedState = context.globalState.get('webviewState', {});
+    panel.webview.postMessage({ command: 'restoreState', data: persistedState });
+  
+    panel.webview.onDidReceiveMessage(
+      (message) => {
+        if (message.command === "submit") {
+          processFiles({ ...message.data }, panel.webview, context);
+          // Update global state
+          context.globalState.update('webviewState', message.data);
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
+    return panel;
+  };
+  
 
 export { openForm, getFormHtml };
