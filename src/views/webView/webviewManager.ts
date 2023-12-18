@@ -303,7 +303,7 @@ select#promptType option {
                     break;
                 case 'restoreState':
                     const { files, ticketInfo, promptType } = event.data.data;
-                    document.getElementById('files').value = files || '';
+                                        document.getElementById('files').value = files || '';
                     document.getElementById('ticket-info').value = ticketInfo || '';
                     document.getElementById('promptType').value = promptType || 'codeSolution';
                     break;
@@ -359,11 +359,20 @@ const openForm: OpenForm = (context) => {
     );
   
     panel.webview.html = getFormHtml();
+
+    const restoreState = () => {
+        const persistedState = context.globalState.get('webviewState', {});
+        panel.webview.postMessage({ command: 'restoreState', data: persistedState });
+    };
   
-    // Restore state
-    const persistedState = context.globalState.get('webviewState', {});
-    panel.webview.postMessage({ command: 'restoreState', data: persistedState });
-  
+    // Restore state initially and whenever the webview becomes visible
+    restoreState();
+    panel.onDidChangeViewState(e => {
+        if (e.webviewPanel.visible) {
+            restoreState();
+        }
+    }, null, context.subscriptions);
+
     panel.webview.onDidReceiveMessage(
       (message) => {
         if (message.command === "submit") {
@@ -376,7 +385,7 @@ const openForm: OpenForm = (context) => {
       context.subscriptions
     );
     return panel;
-  };
+};
   
 
 export { openForm, getFormHtml };

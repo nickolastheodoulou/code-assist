@@ -1,4 +1,6 @@
 ## Release Notes
+-  1.1.6
+    - Fix bug with persist state on window change
 -  1.1.5
     - Persist state across session for generate prompt
 -  1.1.4
