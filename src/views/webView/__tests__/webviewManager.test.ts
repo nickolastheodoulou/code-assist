@@ -2,6 +2,7 @@ import { getTitleFromPromptType } from "../../../utils/prompt/getTitleFromPrompt
 import * as vscode from 'vscode';
 import { getFormHtml, openForm } from "../webviewManager";
 import TITLE from "../../../utils/constants/title";
+import { PromptType } from "../../../__types__/types";
 
 jest.mock('../../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
@@ -44,15 +45,20 @@ describe('openForm', () => {
     beforeEach(() => {
         getMock.mockReturnValueOnce([]);
       });
+      const mockPanel = {
+        webview: {
+            html: '',
+            postMessage: jest.fn(),
+            onDidReceiveMessage: jest.fn().mockImplementation((handler) => {
+                // Simulate a message being posted to the webview
+                handler({ command: 'displayOutput', data: { redactedText: 'example', redactedStrings: ['test'] } });
+                handler({ command: 'restoreState', data: { files: 'example', ticketInfo: 'ticket info...', promptType: PromptType.CODE_OPTIMIZATIONS} });
+                // Add more simulations as needed
+            }),
+        },
+        // ... other mock properties ...
+    };
     it('creates a webview panel and sets up message handling', () => {
-        const mockPanel = {
-            webview: {
-                html: '',
-                onDidReceiveMessage: jest.fn(),
-            },
-            onDidDispose: jest.fn(),
-            reveal: jest.fn(),
-        };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
         openForm(mockExtensionContext);
@@ -67,17 +73,7 @@ describe('openForm', () => {
     });
 
     it('handles messages correctly', () => {
-        const mockPanel = {
-            webview: {
-                html: '',
-                onDidReceiveMessage: jest.fn().mockImplementation((handler) => {
-                    // Simulate a message being posted to the webview
-                    handler({ command: 'displayOutput', data: { redactedText: 'example', redactedStrings: ['test'] } });
-                    // Add more simulations as needed
-                }),
-            },
-            // ... other mock properties ...
-        };
+       
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
         openForm(mockExtensionContext);

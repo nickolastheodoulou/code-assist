@@ -1,4 +1,6 @@
 ## Release Notes
+-  1.1.5
+    - Persist state across session for generate prompt
 -  1.1.4
     - Forward fix - refactor causing bug
 -  1.1.3
