@@ -2,6 +2,7 @@ import { PromptType } from "../../../__types__/types";
 import { getTitleFromPromptType } from "../../../utils/prompt/getTitleFromPromptType";
 import * as vscode from 'vscode';
 import { getFormHtml, openForm } from "../webviewManager";
+import TITLE from "../../../utils/constants/title";
 
 jest.mock('../../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
@@ -31,7 +32,7 @@ describe('getFormHtml', () => {
         (getTitleFromPromptType as jest.Mock).mockReturnValue('Test Title');
         const html = getFormHtml();
 
-        expect(html).toContain('Test Title');
+        expect(html).toContain(TITLE);
         expect(html).toContain('<title>Form</title>');
         expect(html).toMatch(/<input[^>]+id="files"/); // Checks if input for files exists
         expect(html).toMatch(/<textarea[^>]+id="ticket-info"/); // Checks if textarea for ticket-info exists
