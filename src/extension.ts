@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { CodeAssistTreeProvider } from './views/treeView/treeView';
 import { openForm } from './views/webView/webviewManager';
 import { openSettings } from './views/settings/settingsView';
+import TITLE from './utils/constants/title';
 
 export function activate(context: vscode.ExtensionContext) {
     const treeDataProvider = new CodeAssistTreeProvider();
@@ -9,14 +10,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     const openedPanels:any = {}; // TODO add type
 
-    const openFormCommand = vscode.commands.registerCommand('code-prompt-assist.openForm', (promptType) => {
-        if (!openedPanels[promptType]) {
-            openedPanels[promptType] = openForm(promptType, context);
-            openedPanels[promptType].onDidDispose(() => {
-                openedPanels[promptType] = undefined;
+    const openFormCommand = vscode.commands.registerCommand('code-prompt-assist.openForm', () => {
+        if (!openedPanels[TITLE]) {
+            openedPanels[TITLE] = openForm(context);
+            openedPanels[TITLE].onDidDispose(() => {
+                openedPanels[TITLE] = undefined;
             });
         } else {
-            openedPanels[promptType].reveal();
+            openedPanels[TITLE].reveal();
         }
     });
 

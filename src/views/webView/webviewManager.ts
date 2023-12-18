@@ -1,10 +1,52 @@
 import * as vscode from "vscode";
-import { getTitleFromPromptType } from "../../utils/prompt/getTitleFromPromptType";
-import { PromptType } from "../../__types__/types";
 import { processFiles } from "../../utils/fileSystem/processFiles";
-import { applyRedactionRules } from "../../utils/prompt/getPropt";
+import TITLE from "../../utils/constants/title";
 
-const getFormHtml = (promptType: string): string => {
+// @ts-ignore
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
+}
+
+// @ts-ignore
+function sanitizeHTML(text) {
+    const tempDiv = document.createElement('div');
+    tempDiv.textContent = text;
+    return tempDiv.innerHTML;
+}
+
+// @ts-ignore
+function applyRedactedClass(redactedText, redactedStrings) {
+    const outputElement = document.getElementById('output');
+    
+    // Sanitize the redactedText to escape any HTML
+    let sanitizedText = sanitizeHTML(redactedText);
+
+    // @ts-ignore
+    redactedStrings.forEach(redactedString => {
+        const escapedString = escapeRegExp(redactedString);
+        const regex = new RegExp(escapedString, 'gi');
+        sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
+    });
+
+    // @ts-ignore
+    outputElement.innerHTML = sanitizedText;
+}  
+
+const escapeRegExpString = escapeRegExp.toString();
+const sanitizeHTMLString = sanitizeHTML.toString();
+const applyRedactedClassAsString = applyRedactedClass.toString();
+
+const getFormHtml = (): string => {
+
+    const promptTypeDropdown = `
+        <label for="promptType">Select Prompt Type:</label>
+        <select id="promptType" name="promptType">
+            <option value="codeOptimizations">Code Optimizations</option>
+            <option value="unitTests">Unit Tests</option>
+            <option value="codeSolution">Code Solution</option>
+        </select>
+    `;
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,11 +143,38 @@ const getFormHtml = (promptType: string): string => {
         textarea#ticket-info {
             margin-bottom: 15px;
         }
+
+        select#promptType {
+        width: 100%; /* Full-width */
+        padding: 10px; /* Comfortable padding */
+        margin-top: 10px; /* Consistent margin */
+        margin-bottom: 10px;
+        background-color: #f5f5f5; /* Light mode background */
+        border: 1px solid #ccc; /* Subtle border */
+        border-radius: 4px; /* Rounded corners */
+        color: #333; /* Text color */
+        box-sizing: border-box; /* Box sizing */
+        transition: border-color 0.3s; /* Smooth transition for border */
+}
+
+select#promptType:focus {
+    border-color: #0078D4; /* Highlight color when focused */
+    outline: none; /* Removing default focus outline */
+    background-color: #eef4fb; /* Slightly different background on focus */
+}
+
+/* Styling for the options inside the dropdown */
+select#promptType option {
+    padding: 8px; /* Padding for options */
+    background-color: white; /* Background for options */
+    color: black; /* Text color for options */
+}
         
         #outputContainer {
             position: relative;
             padding-right: 50px; 
             margin-top: 20px;
+            display: none;
         }
         
         #copyButton {
@@ -148,7 +217,7 @@ const getFormHtml = (promptType: string): string => {
     </style>
 </head>
 <body>
-    <h1>${getTitleFromPromptType(promptType)}</h1>
+    <h1>${TITLE}</h1>
     <div id="error-message"></div>
     <form id="myForm">
         <label for="files">Relative File Paths:
@@ -161,6 +230,7 @@ const getFormHtml = (promptType: string): string => {
         <label for="ticket-info">Ticket Info:</label>
         <textarea id="ticket-info" name="Ticket Info" placeholder="Describe your ticket information here..." rows="4"></textarea>
 
+        ${promptTypeDropdown}
         <input type="button" id="Submit" value="Submit" onclick="submitForm()">
     </form>
     <div id="outputContainer">
@@ -192,12 +262,15 @@ const getFormHtml = (promptType: string): string => {
             errorElement.style.display = message ? 'block' : 'none';
         }
 
-        function validateInput(files, ticketInfo) {
+        function validateInput(files, ticketInfo, promptType) {
             if (!files.trim()) {
                 return 'Please enter file paths.';
             }
             if (!ticketInfo.trim()) {
                 return 'Please enter ticket information.';
+            }
+            if (!promptType.trim()) {
+                return 'Please select a prompt type.';
             }
             return '';
         }
@@ -205,46 +278,31 @@ const getFormHtml = (promptType: string): string => {
         function submitForm() {
             const files = document.getElementById('files').value;
             const ticketInfo = document.getElementById('ticket-info').value;
+            const promptType = document.getElementById('promptType').value;
           
-            const errorMessage = validateInput(files, ticketInfo);
+            const errorMessage = validateInput(files, ticketInfo, promptType);
             if (errorMessage) {
                 displayError(errorMessage);
                 return;
             }
             displayError('');
 
+            document.getElementById('outputContainer').style.display = 'block';
+
             saveState();
 
             vscode.postMessage({
                 command: 'submit',
-                data: { files, ticketInfo }
+                data: { files, ticketInfo, promptType }
             });
         }
 
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
-        }
+
         
-        function sanitizeHTML(text) {
-            const tempDiv = document.createElement('div');
-            tempDiv.textContent = text;
-            return tempDiv.innerHTML;
-        }
-        
-        function applyRedactedClass(redactedText, redactedStrings) {
-            const outputElement = document.getElementById('output');
-            
-            // Sanitize the redactedText to escape any HTML
-            let sanitizedText = sanitizeHTML(redactedText);
-        
-            redactedStrings.forEach(redactedString => {
-                const escapedString = escapeRegExp(redactedString);
-                const regex = new RegExp(escapedString, 'gi');
-                sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
-            });
-        
-            outputElement.innerHTML = sanitizedText;
-        }        
+        // Inject the dependent functions into the script tag
+        ${escapeRegExpString}
+        ${sanitizeHTMLString}
+        ${applyRedactedClassAsString}
         
         window.addEventListener('message', event => {
             switch (event.data.command) {
@@ -293,23 +351,24 @@ const getFormHtml = (promptType: string): string => {
 };
 
 type OpenForm = (
-  promptType: PromptType,
   context: vscode.ExtensionContext
 ) => void;
 
-const openForm: OpenForm = (promptType, context) => {
+const openForm: OpenForm = (context) => {
   const panel = vscode.window.createWebviewPanel(
     "formView",
-    getTitleFromPromptType(promptType),
+    TITLE,
     vscode.ViewColumn.One,
     { enableScripts: true }
   );
 
-  panel.webview.html = getFormHtml(promptType);
+  panel.webview.html = getFormHtml();
 
   panel.webview.onDidReceiveMessage(
     (message) => {
       if (message.command === "submit") {
+        console.log('message.data', message.data);
+        const promptType = message.data.promptType;
         processFiles({ ...message.data, promptType }, panel.webview, context);
       }
     },
@@ -319,4 +378,4 @@ const openForm: OpenForm = (promptType, context) => {
   return panel;
 };
 
-export { openForm, getFormHtml };
+export { openForm, getFormHtml, applyRedactedClass };

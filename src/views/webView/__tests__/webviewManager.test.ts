@@ -1,7 +1,9 @@
 import { PromptType } from "../../../__types__/types";
 import { getTitleFromPromptType } from "../../../utils/prompt/getTitleFromPromptType";
 import * as vscode from 'vscode';
-import { getFormHtml, openForm } from "../webviewManager";
+import { applyRedactedClass, getFormHtml, openForm } from "../webviewManager";
+import TITLE from "../../../utils/constants/title";
+import { JSDOM } from 'jsdom';
 
 jest.mock('../../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
@@ -29,9 +31,9 @@ const mockExtensionContext = {
 describe('getFormHtml', () => {
     it('returns the correct HTML for a given prompt type', () => {
         (getTitleFromPromptType as jest.Mock).mockReturnValue('Test Title');
-        const html = getFormHtml('codeSolution');
+        const html = getFormHtml();
 
-        expect(html).toContain('Test Title');
+        expect(html).toContain(TITLE);
         expect(html).toContain('<title>Form</title>');
         expect(html).toMatch(/<input[^>]+id="files"/); // Checks if input for files exists
         expect(html).toMatch(/<textarea[^>]+id="ticket-info"/); // Checks if textarea for ticket-info exists
@@ -55,7 +57,7 @@ describe('openForm', () => {
         };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
-        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
+        openForm(mockExtensionContext);
 
         expect(vscode.window.createWebviewPanel).toHaveBeenCalledWith(
             'formView',
@@ -80,7 +82,7 @@ describe('openForm', () => {
         };
         (vscode.window.createWebviewPanel as jest.Mock).mockReturnValue(mockPanel);
 
-        openForm(PromptType.CODE_SOLUTION, mockExtensionContext);
+        openForm(mockExtensionContext);
 
         // Test if the message handler was invoked
         expect(mockPanel.webview.onDidReceiveMessage).toHaveBeenCalled();
@@ -88,4 +90,28 @@ describe('openForm', () => {
         // Further assertions to check if the message was handled as expected
     });
 
+});
+
+
+describe('applyRedactedClass', () => {
+    it('correctly sanitizes and redacts HTML content', () => {
+        // Set up a JSDOM instance to simulate the browser's environment
+        const dom = new JSDOM(`<!DOCTYPE html><p id="output"></p>`);
+        global.document = dom.window.document;
+
+
+        // Example HTML and redaction strings
+        const exampleHTML = '<div>Some <script>alert("xss")</script> content</div>';
+        const redactedStrings = ['content'];
+
+        // Apply the redaction
+        applyRedactedClass(exampleHTML, redactedStrings);
+
+        // Assertions
+        const outputElement = document.getElementById('output');
+        // @ts-ignore
+        expect(outputElement.innerHTML).not.toContain('<script>');
+        // @ts-ignore
+        expect(outputElement.innerHTML).toContain('<span class="redacted">content</span>');
+    });
 });

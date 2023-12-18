@@ -54,7 +54,7 @@ describe("Extension", () => {
     expect(command).toBeDefined();
 
     command[1](promptType);
-    expect(openForm).toHaveBeenCalledWith(promptType, mockContext);
+    expect(openForm).toHaveBeenCalledWith(mockContext);
   });
 });
 
