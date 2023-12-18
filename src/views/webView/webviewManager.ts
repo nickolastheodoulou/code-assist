@@ -140,6 +140,7 @@ select#promptType option {
             position: relative;
             padding-right: 50px; 
             margin-top: 20px;
+            display: none;
         }
         
         #copyButton {
@@ -251,6 +252,8 @@ select#promptType option {
                 return;
             }
             displayError('');
+
+            document.getElementById('outputContainer').style.display = 'block';
 
             saveState();
 
