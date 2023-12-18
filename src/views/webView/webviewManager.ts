@@ -2,40 +2,6 @@ import * as vscode from "vscode";
 import { processFiles } from "../../utils/fileSystem/processFiles";
 import TITLE from "../../utils/constants/title";
 
-// @ts-ignore
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
-}
-
-// @ts-ignore
-function sanitizeHTML(text) {
-    const tempDiv = document.createElement('div');
-    tempDiv.textContent = text;
-    return tempDiv.innerHTML;
-}
-
-// @ts-ignore
-function applyRedactedClass(redactedText, redactedStrings) {
-    const outputElement = document.getElementById('output');
-    
-    // Sanitize the redactedText to escape any HTML
-    let sanitizedText = sanitizeHTML(redactedText);
-
-    // @ts-ignore
-    redactedStrings.forEach(redactedString => {
-        const escapedString = escapeRegExp(redactedString);
-        const regex = new RegExp(escapedString, 'gi');
-        sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
-    });
-
-    // @ts-ignore
-    outputElement.innerHTML = sanitizedText;
-}  
-
-const escapeRegExpString = escapeRegExp.toString();
-const sanitizeHTMLString = sanitizeHTML.toString();
-const applyRedactedClassAsString = applyRedactedClass.toString();
-
 const getFormHtml = (): string => {
 
     const promptTypeDropdown = `
@@ -300,9 +266,35 @@ select#promptType option {
 
         
         // Inject the dependent functions into the script tag
-        ${escapeRegExpString}
-        ${sanitizeHTMLString}
-        ${applyRedactedClassAsString}
+        // @ts-ignore
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^\${}()|[\]\\]/g, '\\$&');
+        }
+
+        // @ts-ignore
+        function sanitizeHTML(text) {
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = text;
+            return tempDiv.innerHTML;
+        }
+
+        // @ts-ignore
+        function applyRedactedClass(redactedText, redactedStrings) {
+            const outputElement = document.getElementById('output');
+            
+            // Sanitize the redactedText to escape any HTML
+            let sanitizedText = sanitizeHTML(redactedText);
+
+            // @ts-ignore
+            redactedStrings.forEach(redactedString => {
+                const escapedString = escapeRegExp(redactedString);
+                const regex = new RegExp(escapedString, 'gi');
+                sanitizedText = sanitizedText.replace(regex, '<span class="redacted">$&</span>');
+            });
+
+            // @ts-ignore
+            outputElement.innerHTML = sanitizedText;
+        }  
         
         window.addEventListener('message', event => {
             switch (event.data.command) {
@@ -367,9 +359,7 @@ const openForm: OpenForm = (context) => {
   panel.webview.onDidReceiveMessage(
     (message) => {
       if (message.command === "submit") {
-        console.log('message.data', message.data);
-        const promptType = message.data.promptType;
-        processFiles({ ...message.data, promptType }, panel.webview, context);
+        processFiles({ ...message.data }, panel.webview, context);
       }
     },
     undefined,
@@ -378,4 +368,4 @@ const openForm: OpenForm = (context) => {
   return panel;
 };
 
-export { openForm, getFormHtml, applyRedactedClass };
+export { openForm, getFormHtml };

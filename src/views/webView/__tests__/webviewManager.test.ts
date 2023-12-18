@@ -1,9 +1,7 @@
-import { PromptType } from "../../../__types__/types";
 import { getTitleFromPromptType } from "../../../utils/prompt/getTitleFromPromptType";
 import * as vscode from 'vscode';
-import { applyRedactedClass, getFormHtml, openForm } from "../webviewManager";
+import { getFormHtml, openForm } from "../webviewManager";
 import TITLE from "../../../utils/constants/title";
-import { JSDOM } from 'jsdom';
 
 jest.mock('../../../utils/prompt/getTitleFromPromptType', () => ({
     getTitleFromPromptType: jest.fn(),
@@ -93,25 +91,25 @@ describe('openForm', () => {
 });
 
 
-describe('applyRedactedClass', () => {
-    it('correctly sanitizes and redacts HTML content', () => {
-        // Set up a JSDOM instance to simulate the browser's environment
-        const dom = new JSDOM(`<!DOCTYPE html><p id="output"></p>`);
-        global.document = dom.window.document;
-
-
-        // Example HTML and redaction strings
-        const exampleHTML = '<div>Some <script>alert("xss")</script> content</div>';
-        const redactedStrings = ['content'];
-
-        // Apply the redaction
-        applyRedactedClass(exampleHTML, redactedStrings);
-
-        // Assertions
-        const outputElement = document.getElementById('output');
-        // @ts-ignore
-        expect(outputElement.innerHTML).not.toContain('<script>');
-        // @ts-ignore
-        expect(outputElement.innerHTML).toContain('<span class="redacted">content</span>');
-    });
-});
+// describe('applyRedactedClass', () => {
+//     it('correctly sanitizes and redacts HTML content', () => {
+//         // Set up a JSDOM instance to simulate the browser's environment
+//         const dom = new JSDOM(`<!DOCTYPE html><p id="output"></p>`);
+//         global.document = dom.window.document;
+// 
+// 
+//         // Example HTML and redaction strings
+//         const exampleHTML = '<div>Some <script>alert("xss")</script> content</div>';
+//         const redactedStrings = ['content'];
+// 
+//         // Apply the redaction
+//         applyRedactedClass(exampleHTML, redactedStrings);
+// 
+//         // Assertions
+//         const outputElement = document.getElementById('output');
+//         // @ts-ignore
+//         expect(outputElement.innerHTML).not.toContain('<script>');
+//         // @ts-ignore
+//         expect(outputElement.innerHTML).toContain('<span class="redacted">content</span>');
+//     });
+// });

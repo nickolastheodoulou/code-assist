@@ -1,4 +1,6 @@
 ## Release Notes
+-  1.1.4
+    - Forward fix - refactor causing bug
 -  1.1.3
     - Simplified view and functionality
 - 1.1.2
