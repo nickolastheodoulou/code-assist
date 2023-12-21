@@ -202,8 +202,6 @@ select#promptType option {
     </form>
     <div id="outputContainer">
         <button id="copyButton">Copy To Clipboard</button>
-        </br>
-        </br>
         <div id="output"></div>
     </div>
     <script>
