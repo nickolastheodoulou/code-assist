@@ -95,6 +95,7 @@ const getFormHtml = (): string => {
             padding: 10px;
             border-radius: 5px;
             margin-top: 20px;
+            white-space: pre-wrap;
         }
         
         @media (prefers-color-scheme: dark) {
@@ -299,8 +300,8 @@ select#promptType option {
                 case 'displayOutput':
                     const { redactedText, redactedStrings } = event.data;
                     applyRedactedClass(redactedText, redactedStrings);
-                    saveState();
-                    break;
+                                            saveState();
+                        break;
                 case 'restoreState':
                     const { files, ticketInfo, promptType } = event.data.data;
                                         document.getElementById('files').value = files || '';
@@ -364,13 +365,13 @@ const openForm: OpenForm = (context) => {
         const persistedState = context.globalState.get('webviewState', {});
         panel.webview.postMessage({ command: 'restoreState', data: persistedState });
     };
-  
+
     // Restore state initially and whenever the webview becomes visible
     restoreState();
     panel.onDidChangeViewState(e => {
         if (e.webviewPanel.visible) {
             restoreState();
-        }
+                }
     }, null, context.subscriptions);
 
     panel.webview.onDidReceiveMessage(
