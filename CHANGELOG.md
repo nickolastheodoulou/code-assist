@@ -1,4 +1,6 @@
 ## Release Notes
+-  1.1.7
+    - Improve prompt generated
 -  1.1.6
     - Fix bug with persist state on window change
 -  1.1.5
